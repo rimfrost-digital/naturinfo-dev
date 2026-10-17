@@ -1,0 +1,18 @@
+---
+description: The /design prototype is read-only
+alwaysApply: true
+---
+
+# /design is read-only
+
+`/design` is the Naturinfo prototype and a reference implementation. Do not modify it.
+
+- Do not edit, create, delete, or reformat files under `/design`.
+- Do not install packages or change configuration inside `/design`.
+- When production should reuse prototype UI, implement that outside `/design`.
+- If prototype behaviour conflicts with `docs/naturinfo/`, follow the docs.
+
+```text
+Allowed: read design/app/art/page.tsx, then change a production file outside /design
+Forbidden: any write under /design, including formatting or dependency updates
+```

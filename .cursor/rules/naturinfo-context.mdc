@@ -1,0 +1,16 @@
+---
+description: Naturinfo docs are the source of truth before production changes
+alwaysApply: true
+---
+
+# Naturinfo production context
+
+Before changing production code, content models, CMS configuration, or copy outside `/design`, read `docs/naturinfo/MASTER-CONTEXT.md` and the detailed spec it links to for the area you are changing.
+
+Those documents are authoritative. If they disagree with `/design`, follow the documents.
+
+If the documents are silent, do not invent a product rule. Ask, or leave the gap explicit.
+
+Swedish is the master language. Geographic context is Hälsingland and Västernorrland, with nearby southern Norrland only when it is ecologically appropriate. When uncertain, verify. Do not invent species facts, lookalikes, or media.
+
+`/design` is read-only. See the design rule.
