@@ -1,8 +1,11 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { Suspense } from "react"
 import { SpeciesArticle } from "./species-article"
 import { loadSpeciesPage } from "@/sanity/lib/species-page"
+
+// Cache Components would stop the build if draft mode were read inside a
+// prerendered shell. A blocking route lets a missing slug render the not-found page.
+export const instant = false
 
 export async function generateMetadata({
   params,
@@ -18,15 +21,7 @@ export async function generateMetadata({
   }
 }
 
-export default function Page({ params }: { params: Promise<{ slug: string }> }) {
-  return (
-    <Suspense fallback={<main className="mx-auto w-full max-w-3xl px-6 py-16">Laddar art…</main>}>
-      <SpeciesRoute params={params} />
-    </Suspense>
-  )
-}
-
-async function SpeciesRoute({ params }: { params: Promise<{ slug: string }> }) {
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const page = await loadSpeciesPage(slug)
   if (!page) notFound()
