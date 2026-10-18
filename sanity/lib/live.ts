@@ -1,6 +1,5 @@
-// Querying with "sanityFetch" will keep content automatically updated
-// Before using it, import and render "<SanityLive />" in your layout, see
-// https://github.com/sanity-io/next-sanity#live-content-api for more information.
+// The published site uses tag revalidation from /api/revalidate.
+// This live client is the Studio scaffold and is not mounted in the app layout.
 import { defineLive } from "next-sanity/live";
 import { client } from './client'
 
