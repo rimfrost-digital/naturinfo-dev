@@ -132,15 +132,24 @@ Frontend work can start after step 1 and 2. Steps 3–6 do not require new image
 - Quiz in the CMS
 - Bulk review of unreferenced prototype files
 
+## Datasets
+
+The earlier planning note that one dataset was enough is superseded. Naturinfo uses two datasets:
+
+- `production` is the dataset for Vercel Production, which deploys from `main`.
+- `staging` is the dataset for Vercel Preview and for local development.
+
+Drafts and the native Publish action still separate an unpublished edit from the published document inside whichever dataset the deployment reads. The second dataset is the environment split, not a replacement for drafts.
+
+The Lodjur pilot migration targets `staging` unless the script is given both `--dataset production` and `--confirm write-production-dataset`. See [SANITY-SETUP.md](SANITY-SETUP.md).
+
 ## What Syed needs to set up in Sanity
 
-Infrastructure and access only. Not the content model.
-
-Create:
+Infrastructure and access only. Not the content model. The project, both datasets, and the Vercel environments are already connected. The list below is the record of that setup, not a request to create a second project.
 
 1. A Sanity project for Naturinfo.
-2. One dataset, preferably named `production`. Drafts plus Publish are enough for preview versus live. A second content dataset is not required for this model.
-3. A hosted Sanity Studio on Sanity's own hosting. The schema should not be built by hand in that Studio.
+2. Two datasets, `production` and `staging`, as described above.
+3. Studio is mounted from this repository at `/studio`. The schema is not built by hand in Sanity's hosted studio.
 4. CORS origins for local development (`http://localhost:3333` and the app's local origin) and, when the hostnames exist, the preview and public sites.
 5. An editor or admin membership for the person who will deploy the Studio from this repository and run the migration.
 6. Two API tokens, delivered outside chat through the team's secret store or a gitignored env file:

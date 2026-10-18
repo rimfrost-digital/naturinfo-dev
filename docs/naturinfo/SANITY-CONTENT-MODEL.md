@@ -1,6 +1,6 @@
 # Sanity content model (planning)
 
-Status: proposal only. Nothing in this file has been created in Sanity.
+Status: the schema in `sanity/schemaTypes` follows this model. Environment split is two datasets, `staging` and `production`. Drafts and Publish still separate unpublished edits inside a dataset. See [SANITY-SETUP.md](SANITY-SETUP.md).
 
 Governed by the specs in this folder, especially [CONTENT-LEVELS.md](CONTENT-LEVELS.md), [LOCALISATION.md](LOCALISATION.md), [VISUAL-SPEC.md](VISUAL-SPEC.md) and [QA-AND-PUBLISHING.md](QA-AND-PUBLISHING.md).
 
@@ -99,6 +99,7 @@ These must not be rendered on the public site.
 | `ask.legacyPrompt` | Imported prototype prompt, kept for review. Not a required production prompt, and not sent to the model |
 | `ask.personaNote` | Optional short note for a subtle species personality |
 | `legacyVariants[]` | Non-public imported copies that must not overwrite the master. Used for `lodjur-v2` |
+| `legacyRelatedSlugs` | Prototype related slugs kept until those species documents exist. Not public references |
 | Asset `provenance`, `rightsNote`, `workflow` | See below |
 
 `publishedLevel` is public. The decision to change it is editorial, but the value itself is shown as the badge.

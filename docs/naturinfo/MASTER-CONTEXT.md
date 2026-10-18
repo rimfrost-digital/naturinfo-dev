@@ -50,6 +50,7 @@ The production application should progressively replace hardcoded prototype data
 | Ask the Species and quiz | [AI-GUIDE-SPEC.md](AI-GUIDE-SPEC.md) |
 | Languages, one species document, permanent URLs | [LOCALISATION.md](LOCALISATION.md) |
 | Sanity, preview, publish, sources, migration, golden set, provenance | [QA-AND-PUBLISHING.md](QA-AND-PUBLISHING.md) |
+| Datasets, env vars, Lodjur migration, draft preview, revalidation | [SANITY-SETUP.md](SANITY-SETUP.md) |
 
 ## Working rules for implementation
 
