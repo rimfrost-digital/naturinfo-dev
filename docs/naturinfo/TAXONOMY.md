@@ -40,4 +40,4 @@ The prototype does not use one label per category. Map existing Swedish labels o
 
 Do not keep the prototype's duplicate labels as separate categories.
 
-The prototype also assigns default content levels by category. That is not taxonomy and must not be migrated as a category property. Levels are per species. See [CONTENT-LEVELS.md](CONTENT-LEVELS.md).
+The prototype also assigns default content levels by category. That is not taxonomy and must not be stored on the category or recreated in the frontend. Each species has its own `publishedLevel` from the locked matrix in [SPECIES-AUDIT.md](SPECIES-AUDIT.md). See [CONTENT-LEVELS.md](CONTENT-LEVELS.md).

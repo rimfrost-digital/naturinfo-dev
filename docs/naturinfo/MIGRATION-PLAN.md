@@ -36,7 +36,7 @@ English and German text migrates whenever the field is non-empty. Set `translati
 | Prototype | Migration |
 | --- | --- |
 | Category labels `Fågel`/`Fåglar`, `Fisk`/`Fiskar`, `Svamp`/`Svampar`, `Växt`/`Bär` | One category id. See [TAXONOMY.md](TAXONOMY.md) |
-| Category tier defaults in `content-tiers.ts` | Ignore. Do not set `publishedLevel` from the category |
+| Category tier defaults in `content-tiers.ts` | Ignore that file. Store the approved `publishedLevel` from the matrix in [SPECIES-AUDIT.md](SPECIES-AUDIT.md). Do not recreate those defaults in the frontend |
 | Gallery items that are videos | Video assets, not gallery images |
 | `gravling` item `gravling-video-placeholder` | Drop the placeholder. Do not create a video. Grävling has no video file |
 | Audio URL with no file | Do not mark documentary `produced`. Keep the path in an import note |
@@ -94,21 +94,25 @@ No English or German documentary audio file exists in `design/public/audio`. Thi
 
 `translationStatus` starts at `migrated`. Launch-ready only after a later review against the approved Swedish master.
 
-## Suggested published level at import
+## Published level at import
 
-This is a starting suggestion for the first import, not a fact-check and not a permanent ceiling.
+Niclas locked the classification on 2026-10-22. See [CONTENT-LEVELS.md](CONTENT-LEVELS.md) and the matrix in [SPECIES-AUDIT.md](SPECIES-AUDIT.md). This supersedes "recommended", "candidate", "proposed", and "start at rich" for the species named there.
 
-- Lodjur: `publishedLevel: full`. It is the confirmed initial Full reference. Media and the v2 conflict still need review
-- Every other species page that has introduction, facts, a hero and either deep-dive cards or a real extra image set: start at `publishedLevel: rich`
-- Where documentary audio or a species sound exists, store it. Those species may stay `rich` at import while the Full material is still unverified. Preview can show the Full composition. Any of them may later be published as Full once the relevant Full material is complete and verified. Lodjur is not the only species allowed to be Full
-- Hjortron, Blåbär, Havtorn, Karljohan and Gran: unpublished drafts. They have an archive card and an image path, and no page text. They are not Core yet
+The stored level and the production state of each module stay separate. A missing script, a missing video, or an example sound is a content gap. It does not demote an approved Rich or Full species. Strömming's unresolved scientific name does not change its Full classification.
 
-Rich does not require video, narration, species sound or Ask the Species. Missing video on the template fungi, trees and plants does not keep them out of Rich.
+Import `publishedLevel` from the matrix:
+
+- `full`: Lodjur, Älg, Gråsäl, Rödräv, Havsörn, Strömming. Lodjur is already `full` on staging.
+- `rich`: every other mammal, bird, and fish, plus Kantarell, Tall, and Lin.
+- `core`: every other fungus, tree, plant, and berry that has a real prototype species page.
+- Unclassified: Hjortron, Blåbär, Havtorn, Karljohan, and Gran. Unpublished drafts. Do not assign Core because the category default is Core.
+
+Where documentary audio or a species sound exists, store it, including on a species whose approved level is `rich`. Preview can show a higher composition. The public level stays the approved value.
 
 ## Migration sequence
 
 1. Categories, then Lodjur, including the hidden v2 variant. This proves one document, three languages, asset roles, level and preview.
-2. Recommended candidates to migrate next, so the other categories can be reviewed in Sanity: Havsörn, Strömming, Kantarell, Tall, Lin. Lodjur is the only confirmed Golden Set species. The other five stay recommendations until they are confirmed after migration. See the audit.
+2. The rest of the migration control set, with the levels already locked: Havsörn and Strömming as `full`, Kantarell, Tall, and Lin as `rich`. See the Golden Set note in the audit. Their levels are no longer recommendations.
 3. Other mammals that already have Swedish documentary audio: Älg, Brunbjörn, Varg, Järv, Grävling, Rådjur, Gråsäl, Rödräv.
 4. Remaining fish, plus Fiskgjuse and Spillkråka. They have real pages, video and Ask copy. They do not have a documentary audio file. Strömming does, and its missing piece is the script, not the recording.
 5. The repeated template pages: remaining fungi, trees, plants and the later birds. One importer path should cover them. They are similar on purpose.
@@ -116,12 +120,16 @@ Rich does not require video, narration, species sound or Ask the Species. Missin
 
 Frontend work can start after step 1 and 2. Steps 3–6 do not require new images, narration or species sounds.
 
+A prototype or preview image may be imported as temporary production material when it passes the media rule in [VISUAL-SPEC.md](VISUAL-SPEC.md): correct species, biologically plausible for this coast and landscape, no obviously wrong subspecies or population, and no inappropriate habitat. Do not wait for a local photograph before import. Do not mark an image local because of its filename.
+
+Before the species is called production-ready, complete the regional biological check in [QA-AND-PUBLISHING.md](QA-AND-PUBLISHING.md). That check does not change the locked `publishedLevel` in [SPECIES-AUDIT.md](SPECIES-AUDIT.md). An unclassified draft stays unclassified.
+
 ## Gaps that can wait
 
 - Scripts and transcripts. Where a Swedish documentary recording already exists, the gap is "audio exists, script/transcript missing", not a missing documentary
 - English and German narration
 - Species sounds beyond the files already in the repo
-- Replacing or approving generated images and videos, including files whose names contain `naromradet`. The name is not evidence that the file is local
+- Replacing a plausible prototype image with a later authentic one. Import need not wait for that replacement. The regional check is still required before the species is production-ready. A filename containing `naromradet` is not evidence that the file is local
 - Identifying which images, if any, are the local photographer's. The repo does not say, and filenames must not be used as that identification
 - Optional species-specific Ask supplements. The shared master prompt plus structured species content covers production. The 25 placeholders and 14 page-reference prompts do not need to be rewritten into 59 full prompts
 - Page copy for the five card-only species

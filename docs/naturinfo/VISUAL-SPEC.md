@@ -53,7 +53,11 @@ Do not fabricate an exact historical model name when the original tool cannot be
 
 Material from the local photographer is intended for use. The photographer's name is not fixed in this spec; store whatever source identity is known.
 
-If a suitable local photographer image exists for a species, it has priority as hero.
+If a suitable local photographer image exists for a species, it has priority as hero. Authentic local photography supplied by the customer or the local photographer has that priority only when it is suitable. A customer image is a replaceable editorial asset, not a permanent part of the page.
+
+Do not assume that every species needs a local photograph. Do not infer that an image is local from its filename. A name such as `naromradet` is not that evidence.
+
+A current prototype or preview image may be used as suitable temporary production material when it shows the correct species, is biologically plausible for this region, does not show an obviously wrong subspecies or population, and does not imply an inappropriate habitat or geographic context. Replace it later from the species asset library when a better authentic image exists. That replacement is an editorial change in Sanity. It must not require a frontend change.
 
 Do not AI-restyle or recolour authentic photographer material to force it into the generated visual style.
 

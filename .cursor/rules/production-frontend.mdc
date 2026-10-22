@@ -1,0 +1,78 @@
+---
+description: Productionize the approved Naturinfo experience; do not make new product or design decisions
+alwaysApply: true
+---
+
+# Naturinfo production frontend rules
+
+`/design` is the approved design and UX source of truth.
+
+Sanity is the source of truth for migrated production content.
+
+The production frontend should productionize the approved experience, not redesign it.
+
+## Critical decision rule
+
+The agent may implement approved decisions.
+
+The agent must not independently make new product, design, UX, navigation, content-hierarchy, section, feature, or editorial decisions.
+
+If something could be improved, report the suggestion and leave the approved implementation unchanged until Niclas explicitly approves the change.
+
+A technically reasonable idea is not an approved product decision.
+
+This applies especially to navigation, homepage hero, species hero, homepage structure, categories, species discovery, section presence, section ordering, cards, badges and content levels, calls to action, galleries, quiz, Ask the Species / Fråga djuret, Kustvägen integration, footer, mobile UX, and public copy.
+
+The agent may independently make implementation-level improvements: `next/image` optimization, responsive sizes, lazy loading, LCP optimization, WebP/AVIF, appropriate media preloading or deferment, accessibility improvements that do not change UX, semantic HTML, performance improvements, removal of unused technical dependencies, and safe responsive implementation.
+
+Those improvements must not materially change the approved design or user experience. If a technical optimization would visibly change the approved experience, stop and report it first.
+
+## Design versus content
+
+Do not confuse limited migrated content with intended product structure.
+
+Only Lodjur being fully migrated does not mean navigation should contain only Lodjur, the homepage should become a Lodjur-only product, categories or discovery should disappear, or quiz and other product features should disappear.
+
+Prototype content must not be falsely represented as published Sanity content. The approved product experience must not be silently removed because migration is incomplete.
+
+## Content levels
+
+There are exactly three content levels: CORE, RICH, and FULL. CORE is the baseline. Respect the content-level specification and Sanity data.
+
+On public species cards, show a FULL or RICH badge. Do not show a CORE badge. CORE remains a real stored level for filtering, logic, CMS and editorial use, and classification. No card badge does not mean CORE is absent.
+
+In production, `publishedLevel` comes from canonical Sanity data. Until a species has been migrated, the customer-preview catalogue may use the locked classification in `docs/naturinfo/SPECIES-AUDIT.md` as temporary preview metadata. That exception must not become permanent production architecture.
+
+Do not infer a level from category, modules, or media. Do not invent or rename a level. Draft, published, and hidden status is separate from content level. If Lodjur is Full in Sanity, its FULL badge stays. Do not modify Sanity to make the frontend easier.
+
+## Ask the Species / Fråga djuret
+
+Fråga djuret is a conversation, not a generic FAQ or CMS field lookup.
+
+The visitor can use suggested questions, ask a free-form question, receive an answer, ask follow-up questions, and continue the conversation. The animal answers in first person. For Lodjur, that sounds like the animal speaking, for example "Jag väger vanligtvis...", not "Det här står om vikt på min sida...".
+
+Sanity provides factual grounding. The conversational persona is part of the approved experience. Do not simplify this into an FAQ because the final AI runtime is not connected. If the backend is unavailable during a preview, preserve the approved UI and isolate demo behaviour technically. Do not invent the final AI architecture during frontend work.
+
+## Quiz
+
+Quiz is an approved Naturinfo product feature. Do not silently remove or disable it. Do not invent a new quiz architecture. Do not create a per-species quiz unless explicitly approved. Respect the existing quiz specification. If the quiz cannot be reproduced safely, report the blocker instead of removing the feature.
+
+## Prototype technical debt
+
+Productionize the approved experience, not the prototype's technical debt. Never copy `/design/public` wholesale. Do not reproduce `images.unoptimized`, unnecessarily huge assets, obsolete URL architecture, prototype-only fallback logic, fake published CMS data, an obsolete AI implementation, or technical shortcuts that conflict with production architecture. Optimize individual required assets instead.
+
+## Protected architecture
+
+Do not change Sanity architecture to simplify the frontend. Unless explicitly instructed, do not change `sanity/**`, `scripts/**`, `app/api/**`, schema, GROQ or data architecture, migration architecture, draft preview, revalidation, or dataset configuration. Syed's technical review areas remain protected.
+
+## Change control
+
+When `/design` and a proposed implementation differ:
+
+1. Preserve `/design` by default.
+2. Report the proposed improvement.
+3. Explain the benefit.
+4. Wait for explicit approval.
+5. Only then implement the design or product change.
+
+Never silently decide that a new implementation is better.

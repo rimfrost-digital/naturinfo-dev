@@ -10,7 +10,7 @@ A video must add something still imagery cannot show: behaviour, movement, time,
 
 For plants, trees, and fungi, do not create meaningless moving-photograph videos. Use lifecycle, flowering, seed dispersal, decomposition, seasonal change, or ecological interaction when a video is relevant. If none of those is appropriate, mark video `not_relevant` rather than filling the module.
 
-Apply the same geographic, species, and Version B accuracy rules as still images. See [VISUAL-SPEC.md](VISUAL-SPEC.md). Do not restyle authentic local footage to match generated imagery.
+Apply the same geographic, species, and Version B accuracy rules as still images, including the regional biological standard and the temporary-media rule. See [VISUAL-SPEC.md](VISUAL-SPEC.md) and [QA-AND-PUBLISHING.md](QA-AND-PUBLISHING.md). Do not restyle authentic local footage to match generated imagery. Do not treat a filename as proof that footage is local.
 
 Existing evidence indicates Google Generative AI was used for at least some video. Do not fabricate an exact historical model name when it cannot be recovered.
 

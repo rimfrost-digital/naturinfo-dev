@@ -4,7 +4,9 @@ Audit date: 2026-10-17. Source: `/design` as read-only. No species was opened in
 
 "Usable" here means the text or file is present and structurally complete enough to migrate. It does not mean fact-checked, and it does not mean an AI-generated asset is final. The repository stores no provenance and no photographer credit.
 
-Prototype tiers are category defaults (`full` for mammals, birds and fish, `core` for fungi, trees and plants, with Lodjur overridden). They are recorded only so they are not mistaken for editorial decisions. The "Can support" column uses the new level rules. Rich does not require documentary audio, species sound or Ask the Species.
+Prototype code defaults are `full` for mammals, birds, and fish, and `core` for fungi, trees, and plants, with only Lodjur overridden. They are recorded so they are not mistaken for the approved levels. Niclas locked the classification on 2026-10-22. The canonical list is [the approved classification matrix](#approved-classification-matrix). It supersedes "recommended", "candidate", "proposed", and "start at rich". The tables before that matrix are the 2026-10-17 capability audit.
+
+The older "Can support" column is capability from the 2026-10-17 audit. It is not `publishedLevel`. A template fungus, tree, or plant that can support Rich is approved Core unless the matrix says Rich. Mammals, birds, and fish are at least Rich. A missing module does not demote an approved Rich or Full species.
 
 ## Counts
 
@@ -36,7 +38,7 @@ Prototype tiers are category defaults (`full` for mammals, birds and fish, `core
 
 ## Mammals
 
-Lodjur is the confirmed initial Full reference. The other mammals can support Full once their relevant Full material is verified. Starting them at Rich during import is a sequencing choice. It is not a rule that only Lodjur may be Full. Where the documentary column says `audio exists, script missing`, the recording is present and the transcript is not.
+Lodjur, Älg, Gråsäl, and Rödräv are approved Full. The other mammals are approved Rich, not Core. Where the documentary column says `audio exists, script missing`, the recording is present and the transcript is not. That gap does not lower the approved level. An example species sound stays a content gap.
 
 | Species | Images | Video | Documentary | Sound | Ask | Can support |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -56,7 +58,7 @@ Lodjur is the confirmed initial Full reference. The other mammals can support Fu
 
 | Species | Images | Video | Documentary | Sound | Ask | Can support |
 | --- | --- | --- | --- | --- | --- | --- |
-| Havsörn `havsorn` | 5 | file `havsorn.mp4` | audio exists, script missing | file | review | Full material. Recommended bird candidate, not yet confirmed |
+| Havsörn `havsorn` | 5 | file `havsorn.mp4` | audio exists, script missing | file | review | Approved Full. Script/transcript still missing |
 | Fiskgjuse `fiskgjuse` | 4 | file | no | no | review | Rich. Ask facts exist; narration file does not |
 | Spillkråka `spillkraka` | 4 | file | no | no | review | Rich |
 | Bofink `bofink` | 3 | file | path only, sv/en/de | no | page-ref | Rich |
@@ -82,7 +84,7 @@ Species sound is not required for these species. None of them have one.
 
 | Species | Images | Video | Documentary | Ask | Can support |
 | --- | --- | --- | --- | --- | --- |
-| Strömming `stromming` | 5 | file `stromming.mp4` | audio exists, script missing | review | Full material. Recommended fish candidate, not yet confirmed |
+| Strömming `stromming` | 5 | file `stromming.mp4` | audio exists, script missing | review | Approved Full. Script/transcript still missing. Scientific name is a separate unresolved issue |
 | Gädda `gadda` | 3 | file | no | review | Rich |
 | Abborre `abborre` | 3 | file | no | review | Rich |
 | Öring `oring` | 3 | file | no | review | Rich |
@@ -98,7 +100,7 @@ No narration and no species sound. That is acceptable for Rich. Video is not req
 
 | Species | Images | Video | Ask | Can support |
 | --- | --- | --- | --- | --- |
-| Kantarell `kantarell` | 5 | file `kantarell.mp4` | review | Rich. Recommended fungus candidate, not yet confirmed. Video still needs review against the "no moving photograph" rule |
+| Kantarell `kantarell` | 5 | file `kantarell.mp4` | review | Approved Rich. Video still needs review against the "no moving photograph" rule |
 | Fjällig bläcksvamp `fjallig-blacksvamp` | 3 | no | placeholder | Rich |
 | Fjällig taggsvamp `fjallig-taggsvamp` | 3 | no | placeholder | Rich |
 | Röd flugsvamp `rod-flugsvamp` | 3 | no | placeholder | Rich |
@@ -110,7 +112,7 @@ No narration and no species sound. That is acceptable for Rich. Video is not req
 
 | Species | Images | Video | Deep dive | Ask | Can support |
 | --- | --- | --- | --- | --- | --- |
-| Tall `tall` | 5 | file `tall-kustvagen.mp4` | no cards; Swedish intro is about 960 characters | page-ref | Rich. Recommended tree candidate, not yet confirmed. Fördjupning still needs to be structured |
+| Tall `tall` | 5 | file `tall-kustvagen.mp4` | no cards; Swedish intro is about 960 characters | page-ref | Approved Rich. Fördjupning still needs to be structured |
 | Rönn `ronn` | 3 | no | 3 cards | placeholder | Rich |
 | Sälg `salg` | 3 | no | 3 cards | placeholder | Rich |
 | Gråal `graal` | 3 | no | 3 cards | placeholder | Rich |
@@ -123,7 +125,7 @@ Species sound is not relevant for these trees. Do not generate one to reach Full
 
 | Species | Images | Video | Deep dive | Ask | Can support |
 | --- | --- | --- | --- | --- | --- |
-| Lin `lin` | 4 | file | 3 text sections, no image cards | page-ref | Rich. Recommended plant candidate, not yet confirmed. Audio paths exist and the files do not |
+| Lin `lin` | 4 | file | 3 text sections, no image cards | page-ref | Approved Rich. Audio paths exist and the files do not |
 | Skogssmultron `skogssmultron` | 3 | no | 3 cards | placeholder | Rich |
 | Skogshallon `skogshallon` | 3 | no | 3 cards | placeholder | Rich |
 | Enbär `enbar` | 3 | no | 3 cards | placeholder | Rich |
@@ -170,27 +172,126 @@ Migrate these numbers to `homepagePriority`. Do not use this list as the Golden 
 
 ## Golden set
 
-Lodjur is the confirmed Full reference. The other five are recommended candidates from material that already exists. They are not locked. Confirm or replace them after the migrated content can be seen in Sanity. This is not a request to produce new assets, and it is not a rule that no other species may be published as Full.
+The Golden Set is a migration and QA control set, not a limit on who may be Full or Rich. Its six species are locked:
 
-| Slot | Species | Status | Why it was recommended |
-| --- | --- | --- | --- |
-| Full mammal | Lodjur | Confirmed | Broadest image set, narration audio, sound, Ask copy, spår. Script/transcript is still missing |
-| Full bird | Havsörn | Recommended candidate | Only bird with narration audio, species sound, a dedicated video and an embedded fact prompt. Script/transcript is still missing |
-| Full fish | Strömming | Recommended candidate | Only fish with narration audio, a dedicated video and an embedded fact prompt. Script/transcript is still missing. Scientific name is unresolved |
-| Rich fungus | Kantarell | Recommended candidate | Only fungus with video, a longer prompt and five images |
-| Rich tree | Tall | Recommended candidate | Longest tree text and the only tree video. Deep-dive cards are still missing |
-| Rich plant | Lin | Recommended candidate | Longest plant text, the only plant video, and three real text sections |
+| Role in the control set | Species | Approved level |
+| --- | --- | --- |
+| Full mammal reference | Lodjur | FULL. Already implemented on staging |
+| Full bird | Havsörn | FULL |
+| Full fish | Strömming | FULL |
+| Rich fungus | Kantarell | RICH |
+| Rich tree | Tall | RICH |
+| Rich plant | Lin | RICH |
 
-Björk, Rönn and Lingon are cleaner examples of the repeated three-card template. They are thinner as reference pages. Use them in the bulk import unless review in Sanity prefers one of them to Tall, Kantarell or Lin.
+Älg, Gråsäl, and Rödräv are also approved Full. They were not part of this control set. Björk, Rönn, and Lingon remain thinner template pages. Their approved level is Core. Do not swap them into the control set in place of Tall, Kantarell, or Lin.
+
+## Approved classification matrix
+
+This is the canonical migration list for all 64 catalogue species. Counts: 6 FULL, 28 RICH, 25 CORE, 5 UNCLASSIFIED DRAFT. Total 64. Real prototype pages: 59. Catalogue-only species: 5.
+
+`publishedLevel` to store: `full`, `rich`, or `core`. The five drafts have no level yet. Only Lodjur is migrated, and its staging value is already `full`.
+
+### Mammals
+
+| Species | Category | Has real prototype page? | Approved target level | Migration state | Important content gaps | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Lodjur | Däggdjur | yes | FULL | Migrated to staging | Documentary script missing. v1 and v2 text disagree | Implemented Full reference. `lodjur-v2` is a hidden variant, not a second species |
+| Älg | Däggdjur | yes | FULL | Not migrated | Documentary script missing | Homepage priority. Has tracks content |
+| Brunbjörn | Däggdjur | yes | RICH | Not migrated | Documentary script missing. Species sound is marked example | |
+| Varg | Däggdjur | yes | RICH | Not migrated | Documentary script missing. Species sound is marked example | |
+| Järv | Däggdjur | yes | RICH | Not migrated | Documentary script missing. Species sound is marked example | |
+| Grävling | Däggdjur | yes | RICH | Not migrated | Documentary script missing. Species sound is marked example. Video is a placeholder with no file | Do not invent a video |
+| Rådjur | Däggdjur | yes | RICH | Not migrated | Documentary script missing. Species sound is marked example | |
+| Gråsäl | Däggdjur | yes | FULL | Not migrated | Documentary script missing | Real species-sound file |
+| Rödräv | Däggdjur | yes | FULL | Not migrated | Documentary script missing | Real species-sound file |
+
+### Birds
+
+| Species | Category | Has real prototype page? | Approved target level | Migration state | Important content gaps | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Havsörn | Fåglar | yes | FULL | Not migrated | Documentary script missing | Homepage priority. Only bird with narration and a species sound |
+| Fiskgjuse | Fåglar | yes | RICH | Not migrated | No documentary audio file | Ask facts exist |
+| Spillkråka | Fåglar | yes | RICH | Not migrated | No documentary audio file | |
+| Bofink | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Template page. `naromradet` in a filename is not a local-photographer proof |
+| Gråtrut | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+| Tjäder | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+| Gråspett | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+| Orre | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+| Lappuggla | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+| Gråhäger | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+| Nattskärra | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+| Koltrast | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+| Domherre | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+| Nötskrika | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+| Smålom | Fåglar | yes | RICH | Not migrated | Documentary paths, no files. Ask prompt only points at the page | Same template |
+
+### Fish
+
+| Species | Category | Has real prototype page? | Approved target level | Migration state | Important content gaps | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Strömming | Fiskar | yes | FULL | Not migrated | Documentary script missing. Scientific name unresolved | Homepage is not this species. Do not choose between `Clupea harengus membras` and `Clupea harengus` during migration |
+| Gädda | Fiskar | yes | RICH | Not migrated | No documentary audio | Homepage priority |
+| Abborre | Fiskar | yes | RICH | Not migrated | No documentary audio | |
+| Öring | Fiskar | yes | RICH | Not migrated | No documentary audio | |
+| Sik | Fiskar | yes | RICH | Not migrated | No documentary audio | |
+| Lax | Fiskar | yes | RICH | Not migrated | No documentary audio | |
+| Ål | Fiskar | yes | RICH | Not migrated | No documentary audio | |
+
+### Fungi
+
+| Species | Category | Has real prototype page? | Approved target level | Migration state | Important content gaps | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Kantarell | Svampar | yes | RICH | Not migrated | No narration or species sound, which is acceptable at Rich. Video still needs the moving-photograph review | Homepage priority. Explicitly promoted above the Core default |
+| Fjällig bläcksvamp | Svampar | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Fjällig taggsvamp | Svampar | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Röd flugsvamp | Svampar | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Fnöskticka | Svampar | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Fårticka | Svampar | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Vårtig röksvamp | Svampar | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Karljohan | Svampar | no | UNCLASSIFIED DRAFT | Not migrated | No page text, facts, translation, video, audio, or Ask content | Do not assign Core while it is only a card |
+
+### Trees
+
+| Species | Category | Has real prototype page? | Approved target level | Migration state | Important content gaps | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Tall | Träd | yes | RICH | Not migrated | Deep-dive cards are not structured. Ask prompt only points at the page. Species sound is not relevant | Homepage priority. Explicitly promoted above the Core default |
+| Rönn | Träd | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | Thinner template page. Not a substitute for Tall |
+| Sälg | Träd | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Gråal | Träd | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Björk | Träd | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | Thinner template page. Not a substitute for Tall |
+| Asp | Träd | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Gran | Träd | no | UNCLASSIFIED DRAFT | Not migrated | No page text, facts, translation, video, audio, or Ask content | Do not assign Core while it is only a card |
+
+### Växter & Bär
+
+| Species | Category | Has real prototype page? | Approved target level | Migration state | Important content gaps | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Lin | Växter & Bär | yes | RICH | Not migrated | Documentary audio paths have no files. Ask prompt only points at the page | Explicitly promoted above the Core default |
+| Skogssmultron | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Skogshallon | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Enbär | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Lingon | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | Homepage priority. That priority is not a Rich classification |
+| Kråkbär | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Linnéa | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Humleblomster | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Harsyra | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Ljung | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Liten blåklocka | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Rundsileshår | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Rödblära | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Ängskovall | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Åkervädd | Växter & Bär | yes | CORE | Not migrated | No video. Ask prompt is a placeholder | |
+| Hjortron | Växter & Bär | no | UNCLASSIFIED DRAFT | Not migrated | No page text, facts, translation, video, audio, or Ask content | Do not assign Core while it is only a card |
+| Blåbär | Växter & Bär | no | UNCLASSIFIED DRAFT | Not migrated | No page text, facts, translation, video, audio, or Ask content | Do not assign Core while it is only a card |
+| Havtorn | Växter & Bär | no | UNCLASSIFIED DRAFT | Not migrated | No page text, facts, translation, video, audio, or Ask content | Do not assign Core while it is only a card |
 
 ## What the audit could not decide
 
-- Which images or videos are the local photographer's. Filenames containing `naromradet` are not that evidence
+- Which images or videos are the local photographer's. Filenames containing `naromradet` are not that evidence. A missing local photograph does not change the locked level. The regional check in [QA-AND-PUBLISHING.md](QA-AND-PUBLISHING.md) is required before production-ready and is not a reclassification
 - Which generated files are accurate enough to stay public
 - Whether videos, including those named `naromradet` and `kantarell.mp4`, show real change over time or are moving photographs
 - Whether the example species sounds are biologically credible
 - Whether English and German sentences match the Swedish master
 - The correct Lodjur figures where v1 and v2 disagree
-- Strömming's scientific name: `Clupea harengus membras` on the species page and in the Ask prompt, `Clupea harengus` on the archive card. Neither may be chosen silently at migration
-- Whether Havsörn, Strömming, Kantarell, Tall and Lin remain the right candidates once they are visible in Sanity
+- Strömming's scientific name: `Clupea harengus membras` on the species page and in the Ask prompt, `Clupea harengus` on the archive card. Neither may be chosen silently at migration. The Full classification stands either way
 - File-size limits for the mp4s in Sanity

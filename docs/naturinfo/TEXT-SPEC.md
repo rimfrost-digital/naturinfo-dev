@@ -18,7 +18,11 @@ Swedish is the authoritative production master for text. Where English or German
 
 Apply the master-context geographic rules to every sentence that states a fact.
 
-Verify species, morphology, habitat, season, behaviour, and surrounding vegetation against the Kustvägen context: Hälsingland and Västernorrland first, and only ecologically appropriate nearby southern Norrland when that is genuinely the species' context.
+Verify species, morphology, habitat, season, behaviour, and surrounding vegetation against the Kustvägen context: Nordanstig and Hälsingland, the adjacent Baltic and Bothnian coast, and Västernorrland first, and only ecologically appropriate nearby southern Norrland when that is genuinely the species' context.
+
+Where it is biologically relevant, describe the species as it occurs in that area. That includes regional occurrence, a documented subspecies or population difference, seasonal plumage or coat, size or characteristics of the local population, habitat, coastal or freshwater context for fish and other aquatic species, and migratory or seasonal presence for birds. General correctness for Sweden is not enough when the local situation differs and that difference is documented.
+
+Do not invent a local difference, a subspecies, a measurement, or a seasonal claim in order to make a text sound more local. If the sources do not support a regional distinction, write the established fact and do not add one.
 
 Do not introduce North American or other foreign lookalikes, exotic vegetation, or invented measurements, behaviour, or folklore presented as fact.
 

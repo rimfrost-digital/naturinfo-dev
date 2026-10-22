@@ -79,6 +79,7 @@ export type PublicImage = {
 export type PublicMedia = {
   url: string
   title: string | null
+  poster: PublicImage | null
 }
 
 export type SpeciesSection =

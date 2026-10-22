@@ -53,7 +53,7 @@ Editors should see `sv`, `en` and `de` beside each other on the same section. Do
 | `slug` | Permanent `/art/[slug]` id. Not translated |
 | `scientificName` | Shared scientific name. Leave empty when sources disagree, and record the candidates in `sourceNotes` until they are verified |
 | `category` | Reference to `category` |
-| `publishedLevel` | `core`, `rich` or `full`. Public badge value. Not a display name |
+| `publishedLevel` | `core`, `rich` or `full`. Stored level, not a Swedish display name. Public cards badge `full` and `rich` only |
 | `hero` | Reference into this species' asset library |
 | `cardImage` | Optional. Falls back to `hero` when empty |
 | `gallery` | Ordered asset references for Bildgalleri |
@@ -102,7 +102,19 @@ These must not be rendered on the public site.
 | `legacyRelatedSlugs` | Prototype related slugs kept until those species documents exist. Not public references |
 | Asset `provenance`, `rightsNote`, `workflow` | See below |
 
-`publishedLevel` is public. The decision to change it is editorial, but the value itself is shown as the badge.
+`publishedLevel` is public editorial metadata. In production it comes from Sanity. On public species cards the badge shows `full` or `rich`. `core` stays stored and is not badged on those cards. The regional biological check does not change it. See [CONTENT-LEVELS.md](CONTENT-LEVELS.md).
+
+## Replacing media
+
+Hero, card image, gallery, local gallery, deep-dive card images, video, and the other role fields point at items in the species asset library. An editor adds or archives a file in `assets` and changes the role reference. The public page reads those references. Replacing a customer image, a local photograph, or a temporary prototype image does not require a frontend change.
+
+`cardImage` may be empty and then falls back to `hero`. An empty `localGallery` means that section is absent. A species does not need a local photograph for either role. `localPhotographer` stays false unless a known source or credit says otherwise. A filename never sets it.
+
+## Regional check, not yet a field
+
+The production-ready check in [QA-AND-PUBLISHING.md](QA-AND-PUBLISHING.md) needs three internal records: whether regional relevance was checked, whether a material issue was found, and a short note only when needed. Those records are not the same as `reviewedAt`, `sourceNotes`, `editorialStatus`, `translationStatus`, module relevance, or asset rights.
+
+The schema does not have them yet. A later admin-only object can hold `checked`, `issueFound`, and `note`. It must not be public, and it must not be stored by overloading `publishedLevel`. This document does not add that object.
 
 ## Sections
 
@@ -184,9 +196,9 @@ Unknown slug handling is application behaviour, not a schema fallback. There is 
 
 Use Sanity drafts and the native Publish action. Preview reads the draft. Live reads the published document. Do not add a custom version history or a per-section approval workflow.
 
-`publishedLevel` can be `rich` while Full assets sit on the document, hidden by level. Storing them is not the same as showing them.
+`publishedLevel` can be `rich` while Full assets sit on the document, hidden by level. Storing them is not the same as showing them. A missing module does not change the approved level. The value to store is the locked matrix in [SPECIES-AUDIT.md](SPECIES-AUDIT.md). See [CONTENT-LEVELS.md](CONTENT-LEVELS.md).
 
-Lodjur is the initial Full reference, not a permanent cap. Any species may later be published as Full once its relevant Full material is complete and verified. Full still does not mean every module exists for every species.
+Lodjur is the implemented Full reference, not a permanent cap. The approved Full targets also include Älg, Gråsäl, Rödräv, Havsörn, and Strömming. Full still does not mean every module exists for every species. A later editorial decision can change a level. This document does not leave the current 64-species list open.
 
 ## Left out on purpose
 
@@ -196,7 +208,7 @@ Lodjur is the initial Full reference, not a permanent cap. Any species may later
 - Customer comments
 - A global media database
 - Public source lists
-- Category default levels
+- Category default levels stored on the category. The animal minimum of Rich is a per-species rule, not a category field. See [CONTENT-LEVELS.md](CONTENT-LEVELS.md)
 - Hardcoded display names for Core, Rich and Full
 
 ## Editor shape

@@ -74,6 +74,39 @@ function publicFile(
   return asset?.fileUrl ?? null
 }
 
+function videoStill(asset: SpeciesAssetResult | undefined): PublicImage | null {
+  if (!asset?.imageUrl || asset.kind === "image") return null
+  return {
+    url: asset.imageUrl,
+    alt: swedish(asset.alt),
+    caption: swedish(asset.caption) || null,
+    credit: asset.showCredit ? swedish(asset.credit) || null : null,
+    width: asset.imageWidth ?? 1600,
+    height: asset.imageHeight ?? 900,
+  }
+}
+
+/**
+ * Poster for a species video. Use a still already stored on the video asset
+ * when one exists. Otherwise use an existing species image: hero, card,
+ * gallery, then deep dive. Do not request the video file to create a frame.
+ */
+function speciesVideoPoster(
+  species: SpeciesQueryResult,
+  assets: Map<string, SpeciesAssetResult>,
+  videoAsset: SpeciesAssetResult | undefined,
+): PublicImage | null {
+  const galleryKey = species.gallery?.find((item) => item.assetKey)?.assetKey
+  const deepDiveKey = species.deepDive?.find((card) => card.imageKey)?.imageKey
+  return (
+    videoStill(videoAsset) ??
+    publicImage(assets, species.hero) ??
+    publicImage(assets, species.cardImage) ??
+    publicImage(assets, galleryKey) ??
+    publicImage(assets, deepDiveKey)
+  )
+}
+
 function heading(
   sectionId: SectionId,
   publicHeading: LocaleValue | null,
@@ -185,9 +218,15 @@ function buildSection(
         .sort((a, b) => Number(b.primary) - Number(a.primary))
         .map((video) => {
           const url = publicFile(assets, video.assetKey)
-          return url ? { url, title: swedish(video.title) || null } : null
+          if (!url) return null
+          const videoAsset = video.assetKey ? assets.get(video.assetKey) : undefined
+          return {
+            url,
+            title: swedish(video.title) || null,
+            poster: speciesVideoPoster(species, assets, videoAsset),
+          }
         })
-        .filter((video): video is { url: string; title: string | null } => video !== null)
+        .filter((video): video is { url: string; title: string | null; poster: PublicImage | null } => video !== null)
       return videos.length
         ? { id: sectionId, heading: sectionHeading, videos, gap: false }
         : null

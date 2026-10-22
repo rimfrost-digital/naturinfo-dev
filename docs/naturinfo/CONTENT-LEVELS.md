@@ -24,7 +24,7 @@ Public names and icons may change later. They are presentation and must not be h
 
 Full does not mean every species has the same modules. A module can be irrelevant for a species even when the species is Full. Plants, trees, and fungi, for example, must not receive a meaningless video just to match a mammal page. See [AUDIO-VIDEO-SPEC.md](AUDIO-VIDEO-SPEC.md).
 
-Migration and publication do not require Full material. A species may be migrated and published at Core or Rich while Full modules are still missing or still need improvement. See [QA-AND-PUBLISHING.md](QA-AND-PUBLISHING.md).
+Migration and publication do not require Full material. An animal stays at least Rich when a Rich or Full module is still missing. A non-animal may be published at Core or Rich only after an individual classification. A catalogue-only draft may stay unclassified. See [QA-AND-PUBLISHING.md](QA-AND-PUBLISHING.md).
 
 ## Published level and stored content
 
@@ -56,9 +56,25 @@ Preview and staging may show `not_produced` modules as labelled gaps, and may pr
 
 ## Where level appears
 
-Level badges appear on species pages, archive cards, homepage species cards, and other species listings. A badge must be able to link to an explanation of the level system. The explanation destination is not fixed in this document.
+There are exactly three content levels: `core`, `rich`, and `full`. `core` is the baseline.
 
-The archive is filterable by level.
+On public species cards, including archive cards, homepage species cards, and other species-card listings:
+
+- `full` shows a FULL badge
+- `rich` shows a RICH badge
+- `core` shows no badge
+
+`core` remains a real stored level. It stays available for filtering, logic, CMS and editorial use, and species classification. No card badge does not mean `core` is absent, and it is not a fourth level. The archive stays filterable by level, including `core`.
+
+A species page shows the stored `publishedLevel`. The card rule does not remove that page badge.
+
+A badge must be able to link to an explanation of the level system. The explanation destination is not fixed in this document.
+
+In production, `publishedLevel` comes from canonical Sanity data. The frontend must not infer it from category, modules, or media, and must not recreate a category default.
+
+Until a species has been migrated to Sanity, the customer-preview catalogue may use the locked classification in [SPECIES-AUDIT.md](SPECIES-AUDIT.md) as temporary preview metadata. That metadata is not Sanity data. Remove it for a species when that species is loaded from Sanity. This exception must not become permanent production architecture. Unclassified drafts still get no level and no badge.
+
+Draft, published, and hidden status is separate from content level.
 
 Different surfaces may use different editorial priority. Featured or prioritised species need per-surface editorial control. Do not derive homepage order, archive order, and related-species order from level alone.
 
@@ -83,15 +99,48 @@ CMS names stay human-readable even when the public heading differs. Public headi
 
 Core curated imagery is the hero, the card image, and any assets explicitly included in the core set. Bildgalleri is the richer ordered gallery and is a Rich section. Hero and card selection are independent of gallery order. See [VISUAL-SPEC.md](VISUAL-SPEC.md).
 
-Bilder från närområdet is shown at the published level whenever suitable local images exist and the section is not hidden. A local hero image may also appear in that section.
+Bilder från närområdet is shown at the published level whenever suitable local images exist and the section is not hidden. A local hero image may also appear in that section. A species does not need a local photograph to keep its approved level. The regional biological check in [QA-AND-PUBLISHING.md](QA-AND-PUBLISHING.md) does not change `publishedLevel`.
 
 Sections can be hidden without deleting their content.
 
-## Do not copy prototype level defaults
+## Approved classification
 
-In `/design`, `lib/content-tiers.ts` defaults whole categories to a tier: mammals, birds, and fish to `full`; fungi, trees, and plants to `core`. Only `lodjur` and `lodjur-v2` are explicit overrides. A comment in that file also says animals are minimum Rich, which does not match the code.
+Niclas locked this classification on 2026-10-22. It supersedes the earlier labels "recommended", "candidate", "proposed", and "start at rich" wherever this decision names a species. The species-by-species list is the matrix in [SPECIES-AUDIT.md](SPECIES-AUDIT.md).
 
-Do not migrate those category defaults as production levels. Set each species level from an editorial decision. Until that decision is made, do not invent levels for the golden-set candidates. Lodjur remains the Full mammal reference. See [QA-AND-PUBLISHING.md](QA-AND-PUBLISHING.md).
+| Statement | What it decides | What it does not decide |
+| --- | --- | --- |
+| Approved target level | The value to store as `publishedLevel` | Whether every module for that level already exists |
+| Group floor or default | Animals are at least `rich`. A non-animal page is `core` unless this decision promotes it | A licence to invent a different level in the frontend |
+| Capability | The 2026-10-17 audit note "Can support" | The stored level |
+| Module status | `produced`, `not_produced`, or `not_relevant` for one section | The species level |
+
+The stored value is explicit editorial metadata. Do not infer it from whichever modules exist. A Rich or Full species keeps that level when a module is temporarily `not_produced`.
+
+### Animals
+
+Mammals, birds, and fish are at least `rich`. Do not classify an animal as `core`.
+
+Approved `full`: Lodjur, Älg, Gråsäl, Rödräv, Havsörn, and Strömming. Lodjur is the implemented Full reference. The other five are approved Full targets from the audited material. A missing documentary script does not lower them. Strömming's unresolved scientific name does not lower it.
+
+Every other mammal, bird, and fish that has a prototype species page is approved `rich`.
+
+### Fungi, trees, plants and berries
+
+The default for a real prototype species page in these categories is `core`, unless this decision explicitly promotes the species.
+
+Approved `rich`: Kantarell, Tall, and Lin. They are not a cap. A later editorial decision can promote another non-animal, but no other non-animal is Rich or Full in the locked list.
+
+Every other fungus, tree, plant, or berry with a real prototype species page is approved `core`.
+
+### Unpublished drafts
+
+Hjortron, Blåbär, Havtorn, Karljohan, and Gran have a catalogue card and no species page. They stay unclassified while unpublished. Do not assign Core because the surrounding category defaults to Core. Give them a level only when enough editorial content exists.
+
+## Do not copy the prototype code defaults
+
+In `/design`, `lib/content-tiers.ts` defaults mammals, birds, and fish to `full`, and fungi, trees, and plants to `core`. Only `lodjur` and `lodjur-v2` are explicit overrides.
+
+Do not migrate those code defaults, and do not recreate them in the frontend. Store the approved level from the matrix on each species. It is not a field on the category. See [TAXONOMY.md](TAXONOMY.md) and [SPECIES-AUDIT.md](SPECIES-AUDIT.md).
 
 The prototype page order also differs from the table above: guide audio and Ask the Species are rendered before the introduction. Production uses the default order in this document unless an editor reorders a species.
 
