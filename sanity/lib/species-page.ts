@@ -2,6 +2,7 @@ import { cacheLife, cacheTag } from "next/cache"
 import { draftMode } from "next/headers"
 import {
   levelAllowsSection,
+  PREVIOUS_DEFAULT_SECTION_ORDER,
   SECTION_CMS_NAME,
   SECTION_IDS,
   type ContentLevel,
@@ -126,12 +127,14 @@ export function toSpeciesView(
       .filter((setting) => setting.sectionId && isSectionId(setting.sectionId))
       .map((setting) => [setting.sectionId, setting]),
   )
-  const order = [
-    ...(species.sectionSettings ?? [])
-      .map((setting) => setting.sectionId)
-      .filter(isSectionId),
-    ...SECTION_IDS.filter((sectionId) => !settings.has(sectionId)),
-  ]
+  const savedOrder = (species.sectionSettings ?? [])
+    .map((setting) => setting.sectionId)
+    .filter(isSectionId)
+  const followsPreviousDefault =
+    savedOrder.length === PREVIOUS_DEFAULT_SECTION_ORDER.length &&
+    savedOrder.every((sectionId, index) => sectionId === PREVIOUS_DEFAULT_SECTION_ORDER[index])
+  const baseOrder = followsPreviousDefault || savedOrder.length === 0 ? SECTION_IDS : savedOrder
+  const order = [...baseOrder, ...SECTION_IDS.filter((sectionId) => !baseOrder.includes(sectionId))]
 
   const sections: SpeciesSection[] = []
   for (const sectionId of order) {

@@ -89,13 +89,19 @@ CMS names stay human-readable even when the public heading differs. Public headi
 | 1 | `hero` | Hero | `core` | Curated primary image and species identity |
 | 2 | `introduction` | Introduktion | `core` | Main species introduction |
 | 3 | `quick_facts` | Snabbfakta | `core` | Short factual points |
-| 4 | `deep_dive` | Fördjupning | `rich` | Richer detail |
-| 5 | `gallery` | Bildgalleri | `rich` | Ordered gallery beyond the core curated set |
-| 6 | `local_gallery` | Bilder från närområdet | any | Only when suitable local images exist. Not a level reward |
-| 7 | `video` | Video | `rich` | See [AUDIO-VIDEO-SPEC.md](AUDIO-VIDEO-SPEC.md) |
-| 8 | `documentary` | Lyssna på dokumentären | `full` | Dedicated narration, not the page text read aloud |
-| 9 | `species_sound` | Artens ljud | `full` | Only when relevant and credible |
-| 10 | `ask_species` | Fråga djuret | `full` | See [AI-GUIDE-SPEC.md](AI-GUIDE-SPEC.md) |
+| 4 | `documentary` | Lyssna på dokumentären | `full` | Directly after Snabbfakta. Dedicated narration, not the page text read aloud |
+| 5 | `deep_dive` | Fördjupning | `rich` | Richer detail |
+| 6 | `gallery` | Bildgalleri | `rich` | Ordered gallery beyond the core curated set |
+| 7 | `local_gallery` | Bilder från närområdet | any | Only when suitable local images exist. Not a level reward |
+| 8 | `video` | Video | `rich` | See [AUDIO-VIDEO-SPEC.md](AUDIO-VIDEO-SPEC.md) |
+| 9 | `species_sound` | Artens ljud | `full` | Inside Fråga djuret when that section is shown. Only when relevant and credible |
+| 10 | `ask_species` | Fråga djuret | `full` | Final major interactive section. See [AI-GUIDE-SPEC.md](AI-GUIDE-SPEC.md) |
+
+On a Full species page the narrative order is Hero, Introduktion, Snabbfakta, Dokumentär, Fördjupning, then Bildgalleri and any other applicable visual section, then Video where it applies, then Fråga djuret. Sections still appear only when they are relevant and available.
+
+When Fråga djuret is shown and a species sound exists, that sound is a control inside Fråga djuret, not its own block above it. Fråga djuret is the last major interactive section. The page then leaves clear space before the catalogue return and the site footer.
+
+A species document that still stores the previous default order, with Fördjupning before Dokumentär, is presented in the order above. An editor's different order is kept.
 
 Core curated imagery is the hero, the card image, and any assets explicitly included in the core set. Bildgalleri is the richer ordered gallery and is a Rich section. Hero and card selection are independent of gallery order. See [VISUAL-SPEC.md](VISUAL-SPEC.md).
 

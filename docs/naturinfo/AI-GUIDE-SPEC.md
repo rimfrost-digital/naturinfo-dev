@@ -40,6 +40,16 @@ Earlier mammal prompts embed a short fact list and a strongly child-directed voi
 
 The prototype UI for the conversation may be reused where it still fits Fråga djuret. The prototype public label "Prata med naturen" is not the required public heading. Public headings can be overridden per species.
 
+### Opening line
+
+The animal speaks as one individual of the species, not as if the species name were its personal name. Swedish uses the indefinite form, for example "Jag är ett lodjur", "Jag är en havsörn", "Jag är en älg", and "Jag är en gädda". Do not produce that form by guessing `en` or `ett` from the name. The indefinite wording is editorial. The Lodjur customer preview opens with "Hej! Jag är ett lodjur. Vad vill du veta?"
+
+### Species sound and page ending
+
+When a produced species sound exists and Fråga djuret is shown, the sound control sits in the Fråga djuret header. It is not a separate block above the section. If there is no sound, show no empty control. The audio file is loaded when the visitor plays it.
+
+Fråga djuret is the last major interactive section. After it, the page leaves clear space on the paper background before the catalogue return and the site footer, so the conversation does not run into that ending.
+
 No production model vendor is chosen in this document. The prototype calls `openai/gpt-5.4-mini`. That is not a requirement.
 
 ## Quiz

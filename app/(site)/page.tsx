@@ -40,7 +40,7 @@ export default function HomePage() {
           priority
           fetchPriority="high"
           sizes="100vw"
-          className="object-cover"
+          className="object-cover object-[center_88%]"
         />
         <div className="absolute inset-0 bg-forest-deep/15" />
         <div

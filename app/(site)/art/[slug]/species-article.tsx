@@ -3,6 +3,7 @@ import { ArrowLeft, Beef, Leaf, MapPin, Moon, PawPrint, Ruler, Scale } from "luc
 import { AskSpeciesDemo } from "@/components/ask-species-demo"
 import { DeferredVideo } from "@/components/deferred-video"
 import { GuideAudioPlayer } from "@/components/guide-audio-player"
+import { SpeciesGallery } from "@/components/species-gallery"
 import { SpeciesImage } from "@/components/species-image"
 import { SpeciesSoundButton } from "@/components/species-sound-button"
 import { contentLevelLabel } from "@/lib/content-level-label"
@@ -10,7 +11,6 @@ import { paragraphs } from "@/sanity/lib/species-page"
 import type { PublicImage, SpeciesSection, SpeciesView } from "@/sanity/lib/types"
 
 const contentImageSizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
-const galleryImageSizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 400px"
 const factIcons = [Scale, Beef, PawPrint, MapPin, Ruler, Leaf, Moon]
 
 export function SpeciesArticle({ page }: { page: SpeciesView }) {
@@ -30,11 +30,20 @@ export function SpeciesArticle({ page }: { page: SpeciesView }) {
           section.id === "deep_dive" && !section.gap,
       )
       ?.cards.map((card) => ({ label: card.heading, value: card.body })) ?? []
+  const sound = page.sections.find(
+    (section): section is Extract<SpeciesSection, { id: "species_sound" }> =>
+      section.id === "species_sound" && !section.gap && Boolean(section.audioUrl),
+  )
+  const askShown = page.sections.some((section) => section.id === "ask_species" && !section.gap)
+  const sections =
+    askShown && sound
+      ? page.sections.filter((section) => section.id !== "species_sound")
+      : page.sections
 
   return (
     <article className="bg-paper">
       {page.preview ? <PreviewBanner slug={page.slug} /> : null}
-      {page.sections.map((section) => (
+      {sections.map((section) => (
         <SectionView
           key={section.id}
           section={section}
@@ -43,6 +52,7 @@ export function SpeciesArticle({ page }: { page: SpeciesView }) {
           heroImage={heroImage ?? null}
           facts={facts}
           cards={cards}
+          sound={sound?.audioUrl ? { src: sound.audioUrl, label: sound.label } : null}
         />
       ))}
       <section className="bg-forest">
@@ -77,6 +87,7 @@ function SectionView({
   heroImage,
   facts,
   cards,
+  sound,
 }: {
   section: SpeciesSection
   preview: boolean
@@ -84,6 +95,7 @@ function SectionView({
   heroImage: PublicImage | null
   facts: { label: string; value: string }[]
   cards: { label: string; value: string }[]
+  sound: { src: string; label: string | null } | null
 }) {
   if (section.gap) {
     if (!preview) return null
@@ -187,7 +199,7 @@ function SectionView({
         <section className="bg-forest-deep">
           <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
             <h2 className="mb-8 font-serif text-4xl font-semibold text-paper">{section.heading}</h2>
-            <Gallery images={section.images} />
+            <SpeciesGallery images={section.images} enlargeable={section.id === "gallery"} />
           </div>
         </section>
       )
@@ -249,6 +261,7 @@ function SectionView({
           avatar={heroImage}
           facts={facts}
           cards={cards}
+          sound={sound}
         />
       )
   }
@@ -309,24 +322,3 @@ function Hero({ page, image, label }: { page: SpeciesView; image: PublicImage; l
   )
 }
 
-function Gallery({ images }: { images: PublicImage[] }) {
-  return (
-    <ul className="columns-2 gap-4 lg:columns-3">
-      {images.map((image, index) => (
-        <li key={`${image.url}-${index}`} className="mb-4 break-inside-avoid">
-          <div
-            className="relative overflow-hidden rounded-2xl"
-            style={{ aspectRatio: `${image.width} / ${image.height}` }}
-          >
-            <SpeciesImage image={image} fill sizes={galleryImageSizes} quality={70} className="object-cover" />
-          </div>
-          {image.caption || image.credit ? (
-            <p className="px-1 py-3 text-sm leading-relaxed text-paper/75">
-              {[image.caption, image.credit].filter(Boolean).join(" ")}
-            </p>
-          ) : null}
-        </li>
-      ))}
-    </ul>
-  )
-}

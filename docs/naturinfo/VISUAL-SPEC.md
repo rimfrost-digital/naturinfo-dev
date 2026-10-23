@@ -29,6 +29,18 @@ Hero selection, card or puff selection, and gallery order are independent.
 
 Galleries support manual drag-and-drop ordering.
 
+## Bildgalleri
+
+Images in Bildgalleri open in a lightbox. The gallery layout itself stays as designed.
+
+- Click, tap, or keyboard activation opens the enlarged image on a dark overlay.
+- A close control closes the viewer. Clicking or tapping the overlay outside the image also closes it. Escape closes it.
+- When the gallery has more than one image, previous and next controls are available. Left Arrow and Right Arrow move between images. A horizontal swipe does the same.
+- The controls are keyboard accessible, and the image keeps its existing alt text.
+- A caption and a photographer credit are shown in the viewer when that asset provides them. Missing text is not invented. The caption under the gallery image stays.
+- The enlarged image is requested when the viewer opens that image. The gallery grid keeps its responsive images.
+- Deep-dive images are not opened in this viewer. Bilder från närområdet is a separate section and is not lightboxed.
+
 Assets support flexible descriptive tags. Expected tags include habitat, food, tracks, droppings, behaviour, young or life stage, season, and interaction. Tags are not a closed list; add a precise tag when it describes the image. Tags do not replace the geographic and species checks in the master context.
 
 Alt text and captions are linguistic. See [LOCALISATION.md](LOCALISATION.md).

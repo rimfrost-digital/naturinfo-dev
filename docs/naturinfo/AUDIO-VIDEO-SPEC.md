@@ -38,6 +38,8 @@ Documentary narration and species sounds do not need to use the same generation 
 
 Do not publish a species-sound module for a species that has no credible sound, including trees and many plants and fungi, unless a real and relevant sound exists. Mark the module `not_relevant` instead of generating a decorative noise. The prototype contains empty sound entries for some species; empty entries are not produced content.
 
+When Fråga djuret is on the page, the public sound control is inside that section. See [AI-GUIDE-SPEC.md](AI-GUIDE-SPEC.md).
+
 ## Tools
 
 Google generative tools and ElevenLabs are acceptable production tools. Other tools are allowed if the result meets this spec. No external generation API is required for the first production implementation.

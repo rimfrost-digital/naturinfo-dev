@@ -6,6 +6,27 @@ export const SECTION_IDS = [
   "hero",
   "introduction",
   "quick_facts",
+  "documentary",
+  "deep_dive",
+  "gallery",
+  "local_gallery",
+  "video",
+  "species_sound",
+  "ask_species",
+] as const
+
+export type SectionId = (typeof SECTION_IDS)[number]
+
+/**
+ * Order seeded before documentary was placed directly after Snabbfakta.
+ * A document that still has exactly this order has not been editorially
+ * reordered, so presentation uses SECTION_IDS instead. A different saved
+ * order is kept.
+ */
+export const PREVIOUS_DEFAULT_SECTION_ORDER: readonly SectionId[] = [
+  "hero",
+  "introduction",
+  "quick_facts",
   "deep_dive",
   "gallery",
   "local_gallery",
@@ -13,9 +34,7 @@ export const SECTION_IDS = [
   "documentary",
   "species_sound",
   "ask_species",
-] as const
-
-export type SectionId = (typeof SECTION_IDS)[number]
+]
 
 export const SECTION_CMS_NAME: Record<SectionId, string> = {
   hero: "Hero",

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { PawPrint, Send } from "lucide-react";
 import { SpeciesImage } from "@/components/species-image";
+import { SpeciesSoundButton } from "@/components/species-sound-button";
 import type { PublicImage } from "@/sanity/lib/types";
 
 type Fact = { label: string; value: string };
@@ -21,6 +22,7 @@ export function AskSpeciesDemo({
   avatar,
   facts,
   cards,
+  sound = null,
 }: {
   title: string;
   intro: string | null;
@@ -29,12 +31,14 @@ export function AskSpeciesDemo({
   avatar: PublicImage | null;
   facts: Fact[];
   cards: Fact[];
+  sound?: { src: string; label: string | null } | null;
 }) {
   const [draft, setDraft] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [busy, setBusy] = useState(false);
   const nextId = useRef(0);
-  const welcome = `Hej! Jag är ${speciesName}. Vad vill du veta?`;
+  const welcome = openingGreeting(speciesName);
+  const soundLabel = listenLabel(speciesName, sound?.label ?? null);
 
   function ask(text: string) {
     const question = text.trim();
@@ -55,18 +59,27 @@ export function AskSpeciesDemo({
   }
 
   return (
-    <section className="bg-paper" data-ask-presentation="page-facts">
+    <section className="bg-paper pb-20 sm:pb-28" data-ask-presentation="page-facts">
       <div className="mx-auto max-w-6xl px-5 pt-16 sm:px-8 sm:pt-20">
         <div className="rounded-3xl bg-forest p-6 sm:p-10">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-brass">
-            <PawPrint className="h-4 w-4 text-paper" aria-hidden="true" />
-            Prata med naturen
-          </p>
-          <h2 className="mt-3 font-serif text-4xl font-semibold text-paper sm:text-5xl">{title}</h2>
-          {intro ? <p className="mt-3 max-w-2xl leading-relaxed text-paper/80">{intro}</p> : null}
-          <p className="mt-2 text-sm italic text-brass">
-            En lekfull guide för barn – svaren skapas av en digital {speciesName.toLowerCase()}skompis.
-          </p>
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+            <div className="min-w-0">
+              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-brass">
+                <PawPrint className="h-4 w-4 text-paper" aria-hidden="true" />
+                Prata med naturen
+              </p>
+              <h2 className="mt-3 font-serif text-4xl font-semibold text-paper sm:text-5xl">{title}</h2>
+              {intro ? <p className="mt-3 max-w-2xl leading-relaxed text-paper/80">{intro}</p> : null}
+              <p className="mt-2 text-sm italic text-brass">
+                En lekfull guide för barn – svaren skapas av en digital {speciesName.toLowerCase()}skompis.
+              </p>
+            </div>
+            {sound ? (
+              <div className="shrink-0 sm:pt-10">
+                <SpeciesSoundButton src={sound.src} label={soundLabel} />
+              </div>
+            ) : null}
+          </div>
 
           <div className="mt-6 overflow-hidden rounded-2xl bg-paper shadow-inner">
             <div className="flex max-h-96 min-h-[16rem] flex-col gap-4 overflow-y-auto p-5">
@@ -166,6 +179,23 @@ function Avatar({ avatar }: { avatar: PublicImage | null }) {
 }
 
 const UNKNOWN = "Det vet jag faktiskt inte utifrån det som finns berättat om mig här.";
+
+/** Editorial indefinite greeting. Do not guess en/ett from the species name. */
+const OPENING_GREETING: Record<string, string> = {
+  lodjur: "Hej! Jag är ett lodjur. Vad vill du veta?",
+};
+
+const LISTEN_LABEL: Record<string, string> = {
+  lodjur: "Lyssna på lodjuret",
+};
+
+function openingGreeting(speciesName: string) {
+  return OPENING_GREETING[speciesName.toLocaleLowerCase("sv")] ?? "Hej! Vad vill du veta?";
+}
+
+function listenLabel(speciesName: string, storedLabel: string | null) {
+  return LISTEN_LABEL[speciesName.toLocaleLowerCase("sv")] ?? (storedLabel?.trim() || "Lyssna");
+}
 
 function answerFromPage(question: string, speciesName: string, facts: Fact[], cards: Fact[]) {
   if (asksForSpeed(question) && !mentionsSpeed(facts, cards)) return UNKNOWN;

@@ -123,15 +123,17 @@ The schema does not have them yet. A later admin-only object can hold `checked`,
 1. `hero`
 2. `introduction`
 3. `quick_facts`
-4. `deep_dive`
-5. `gallery`
-6. `local_gallery`
-7. `video`
-8. `documentary`
+4. `documentary`
+5. `deep_dive`
+6. `gallery`
+7. `local_gallery`
+8. `video`
 9. `species_sound`
 10. `ask_species`
 
-Editors reorder this list per species. Content stays in the fields above, so reordering does not duplicate body text.
+Documentary comes directly after Snabbfakta. When Fråga djuret is shown, species sound is presented inside that section rather than as its own public block. See [CONTENT-LEVELS.md](CONTENT-LEVELS.md) and [AI-GUIDE-SPEC.md](AI-GUIDE-SPEC.md).
+
+Editors reorder this list per species. A saved list that is still the previous default is presented in the current default until an editor changes it. Content stays in the fields above, so reordering does not duplicate body text.
 
 CMS names stay the Swedish names in [CONTENT-LEVELS.md](CONTENT-LEVELS.md). Public headings come from the CMS name unless `publicHeading` is set.
 
