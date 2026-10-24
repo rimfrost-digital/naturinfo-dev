@@ -70,6 +70,8 @@ Do not bulk-migrate, and do not write production data, unless the task explicitl
 
 ## How to work
 
+The canonical local development port is **3010**. `npm run dev` starts Next.js at http://localhost:3010. Keep local development on that port.
+
 Implement approved decisions. Do not make a silent product decision.
 
 If an improvement would materially change approved UX or product behaviour, report it and wait for approval. Technical improvements that preserve the approved behaviour are allowed inside the assigned task. Do not fix unrelated things along the way.

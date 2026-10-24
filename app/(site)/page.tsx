@@ -4,6 +4,7 @@ import { MapPin } from "lucide-react";
 import { QuizClient } from "@/components/quiz-client";
 import { contentLevelLabel, publicCardLevelBadge } from "@/lib/content-level-label";
 import { previewContentLevel, species } from "@/lib/catalogue-data";
+import { customerPreviewSpeciesSlugs } from "@/lib/customer-preview/species";
 
 const categories = [
   { title: "Däggdjur", image: "/images/categories/mammals.webp", alt: "Rådjur i morgonljus i en barrskog", key: "daggdjur" },
@@ -14,11 +15,24 @@ const categories = [
   { title: "Växter & Bär", image: "/images/categories/plants.webp", alt: "Blåbär och lingon i en skogsbacke", key: "vaxter" },
 ];
 
+function featuredSpecies(title: string) {
+  return species.find((item) => item.name === title);
+}
+
 function featuredLevel(title: string) {
-  const match = species.find((item) => item.name === title);
+  const match = featuredSpecies(title);
   const level = match ? previewContentLevel[match.slug] : undefined;
   return publicCardLevelBadge(level ? contentLevelLabel(level) : null);
 }
+
+function featuredHref(title: string) {
+  const match = featuredSpecies(title);
+  if (!match || !customerPreviewSpeciesSlugs.has(match.slug)) return null;
+  return `/art/${match.slug}`;
+}
+
+const featuredCardClass =
+  "relative flex aspect-[3/4] flex-col justify-end overflow-hidden rounded-3xl ring-1 ring-paper/10";
 
 const featured = [
   { title: "Älg", image: "/images/featured/alg.webp", category: "Däggdjur" },
@@ -116,36 +130,48 @@ export default function HomePage() {
             Sex arter från skog, sjö och kust — utforska var och en på nära håll.
           </p>
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((item) => (
-              <article
-                key={item.title}
-                className="relative flex aspect-[3/4] flex-col justify-end overflow-hidden rounded-3xl ring-1 ring-paper/10"
-              >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover"
-                />
-                <div
-                  className="absolute inset-0 bg-gradient-to-t from-[#12180F] via-[#12180F]/50 to-transparent"
-                  aria-hidden="true"
-                />
-                <span className="absolute top-3 left-3 rounded bg-brass px-2 py-0.5 font-sans text-[10px] font-semibold tracking-wider text-forest-deep uppercase">
-                  {item.category}
-                </span>
-                {featuredLevel(item.title) ? (
-                  <span className="absolute top-3 right-3 rounded bg-paper px-2 py-0.5 font-sans text-[10px] font-semibold tracking-wider text-forest-deep">
-                    {featuredLevel(item.title)}
+            {featured.map((item) => {
+              const href = featuredHref(item.title);
+              const card = (
+                <>
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover"
+                  />
+                  <div
+                    className="absolute inset-0 bg-gradient-to-t from-[#12180F] via-[#12180F]/50 to-transparent"
+                    aria-hidden="true"
+                  />
+                  <span className="absolute top-3 left-3 rounded bg-brass px-2 py-0.5 font-sans text-[10px] font-semibold tracking-wider text-forest-deep uppercase">
+                    {item.category}
                   </span>
-                ) : null}
-                <div className="relative p-6">
-                  <h3 className="font-serif text-3xl font-medium leading-tight text-paper">{item.title}</h3>
-                  <span className="mt-4 block h-px w-12 bg-brass" aria-hidden="true" />
-                </div>
-              </article>
-            ))}
+                  {featuredLevel(item.title) ? (
+                    <span className="absolute top-3 right-3 rounded bg-paper px-2 py-0.5 font-sans text-[10px] font-semibold tracking-wider text-forest-deep">
+                      {featuredLevel(item.title)}
+                    </span>
+                  ) : null}
+                  <div className="relative p-6">
+                    <h3 className="font-serif text-3xl font-medium leading-tight text-paper">{item.title}</h3>
+                    <span className="mt-4 block h-px w-12 bg-brass" aria-hidden="true" />
+                  </div>
+                </>
+              );
+              if (!href) {
+                return (
+                  <article key={item.title} className={featuredCardClass}>
+                    {card}
+                  </article>
+                );
+              }
+              return (
+                <Link key={item.title} href={href} className={featuredCardClass}>
+                  {card}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

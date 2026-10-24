@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { QrCode, Search } from "lucide-react";
 import { contentLevelLabel, publicCardLevelBadge } from "@/lib/content-level-label";
+import { customerPreviewSpeciesSlugs } from "@/lib/customer-preview/species";
 import {
   categoryFilters,
   categoryLabels,
@@ -164,6 +165,7 @@ function SpeciesCard({
   published: PublishedCatalogueEntry | null;
 }) {
   const migrated = published?.slug === species.slug;
+  const hasPage = migrated || customerPreviewSpeciesSlugs.has(species.slug);
   const body = (
     <>
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -172,7 +174,7 @@ function SpeciesCard({
           alt={`${species.name} (${species.latin})`}
           fill
           sizes="(max-width: 768px) 50vw, 25vw"
-          className={`object-cover${migrated ? " transition duration-500 group-hover:scale-105" : ""}`}
+          className={`object-cover${hasPage ? " transition duration-500 group-hover:scale-105" : ""}`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         <span className="absolute top-3 left-3 rounded bg-brass px-2 py-0.5 font-sans text-[10px] font-semibold tracking-wider text-forest-deep uppercase">
@@ -191,7 +193,7 @@ function SpeciesCard({
     </>
   );
 
-  if (!migrated) {
+  if (!hasPage) {
     return <article className="flex flex-col overflow-hidden rounded-xl bg-forest-deep shadow-sm">{body}</article>;
   }
 

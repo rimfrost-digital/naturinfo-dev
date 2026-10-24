@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { loadSpeciesPageOrCustomerPreview } from "@/lib/customer-preview/load-species-page"
 import { SpeciesArticle } from "./species-article"
-import { loadSpeciesPage } from "@/sanity/lib/species-page"
 
 // Cache Components would stop the build if draft mode were read inside a
 // prerendered shell. A blocking route lets a missing slug render the not-found page.
@@ -13,7 +13,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const page = await loadSpeciesPage(slug)
+  const page = await loadSpeciesPageOrCustomerPreview(slug)
   if (!page) return { title: "Art" }
   return {
     title: page.title,
@@ -23,7 +23,7 @@ export async function generateMetadata({
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const page = await loadSpeciesPage(slug)
+  const page = await loadSpeciesPageOrCustomerPreview(slug)
   if (!page) notFound()
   return <SpeciesArticle page={page} />
 }

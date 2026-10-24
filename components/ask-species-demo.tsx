@@ -22,6 +22,7 @@ export function AskSpeciesDemo({
   avatar,
   facts,
   cards,
+  narrative = null,
   sound = null,
 }: {
   title: string;
@@ -31,6 +32,8 @@ export function AskSpeciesDemo({
   avatar: PublicImage | null;
   facts: Fact[];
   cards: Fact[];
+  /** Page introduction, used only when the page has no deep-dive cards. */
+  narrative?: string | null;
   sound?: { src: string; label: string | null } | null;
 }) {
   const [draft, setDraft] = useState("");
@@ -52,7 +55,7 @@ export function AskSpeciesDemo({
     window.setTimeout(() => {
       setTurns((current) => [
         ...current,
-        { id: replyId, role: "species", text: answerFromPage(question, speciesName, facts, cards) },
+        { id: replyId, role: "species", text: answerFromPage(question, speciesName, facts, cards, narrative) },
       ]);
       setBusy(false);
     }, 450);
@@ -183,10 +186,15 @@ const UNKNOWN = "Det vet jag faktiskt inte utifrån det som finns berättat om m
 /** Editorial indefinite greeting. Do not guess en/ett from the species name. */
 const OPENING_GREETING: Record<string, string> = {
   lodjur: "Hej! Jag är ett lodjur. Vad vill du veta?",
+  havsörn: "Hej! Jag är en havsörn. Vad vill du veta?",
+  kantarell: "Hej! Jag är en kantarell. Vad vill du veta?",
+  tall: "Hej! Jag är en tall. Vad vill du veta?",
 };
 
 const LISTEN_LABEL: Record<string, string> = {
   lodjur: "Lyssna på lodjuret",
+  // Same customer-preview button as Lodjur. The prototype label is "Så här låter djuret".
+  havsörn: "Lyssna på havsörnen",
 };
 
 function openingGreeting(speciesName: string) {
@@ -197,19 +205,37 @@ function listenLabel(speciesName: string, storedLabel: string | null) {
   return LISTEN_LABEL[speciesName.toLocaleLowerCase("sv")] ?? (storedLabel?.trim() || "Lyssna");
 }
 
-function answerFromPage(question: string, speciesName: string, facts: Fact[], cards: Fact[]) {
+function answerFromPage(
+  question: string,
+  speciesName: string,
+  facts: Fact[],
+  cards: Fact[],
+  narrative: string | null,
+) {
   if (asksForSpeed(question) && !mentionsSpeed(facts, cards)) return UNKNOWN;
+  if (asksForLookalike(question) && !mentionsLookalike(facts, cards)) return UNKNOWN;
 
   const fact = facts.find((item) => matchesFact(question, item.label));
   if (fact) return speakFact(fact, speciesName);
 
   const card = bestCard(question, cards);
-  if (!card) return UNKNOWN;
-  return speakAboutMyself(relevantPassage(question, card), speciesName);
+  if (card) return speakAboutMyself(relevantPassage(question, card), speciesName);
+  if (narrative && cards.length === 0) return answerFromNarrative(question, speciesName, narrative);
+  return UNKNOWN;
 }
 
 function asksForSpeed(question: string) {
   return /spring|snabb|hastighet|\bkm\b/i.test(question);
+}
+
+function asksForLookalike(question: string) {
+  return /giftig|förväx|blanda ihop|dubbelgångare/i.test(question);
+}
+
+function mentionsLookalike(facts: Fact[], cards: Fact[]) {
+  return [...facts, ...cards].some((item) =>
+    /giftig|förväx|dubbelgångare|narrkantarell/i.test(`${item.label} ${item.value}`),
+  );
 }
 
 function mentionsSpeed(facts: Fact[], cards: Fact[]) {
@@ -230,9 +256,15 @@ function speakFact(fact: Fact, speciesName: string) {
       const detail = diet[1].replace(/\s*&\s*/g, " och ").trim();
       return `Jag är köttätare, ${lowerFirst(detail)}.`;
     }
-    return /[.!?]$/.test(value) ? speakAboutMyself(value, speciesName) : `Jag är ${lowerFirst(value)}.`;
+    if (/[.!?]$/.test(value)) return speakAboutMyself(value, speciesName);
+    return `Jag äter ${lowerFirst(value).replace(/\s*&\s*/g, " och ")}.`;
   }
   if (/spår/.test(label)) return `Mina spår är ${lowerFirst(value)}.`;
+  if (/säsong/.test(label)) {
+    const season = value.toLocaleLowerCase("sv").replace(/\s*[–—-]\s*/g, " till ");
+    return `Jag finns från ${season.replace(/\.+$/, "")}.`;
+  }
+  if (/ålder/.test(label)) return `Jag kan bli ${lowerFirst(value)}.`;
   if (/liv|miljö|hem|biotop/.test(label)) return `Jag lever i ${lowerFirst(value)}.`;
   return /[.!?]$/.test(value)
     ? speakAboutMyself(value, speciesName)
@@ -252,7 +284,8 @@ function bestCard(question: string, cards: Fact[]) {
     const body = card.value.toLocaleLowerCase("sv");
     const hits = words.filter((word) => heading.includes(word) || body.includes(word)).length;
     const alias = APPEARANCE.test(question) && /utseende|kännetecken/.test(heading) ? 2 : 0;
-    const total = hits + alias;
+    const nest = NEST.test(question) && /häck|risbo|\bbo(?:et|en|na)?\b/.test(`${heading} ${body}`) ? 2 : 0;
+    const total = hits + alias + nest;
     if (total > score) {
       best = card;
       score = total;
@@ -283,6 +316,7 @@ function keywords(question: string) {
 }
 
 const APPEARANCE = /ser du ut|hur ser|utseende|din päls|päls|kännetecken|din färg|färg har du|färg är du/i;
+const NEST = /\bbo(?:et|en|na|n)?\b|häck/i;
 
 const STOP_WORDS = new Set([
   "något",
@@ -402,5 +436,42 @@ function matchesFact(question: string, label: string) {
   if (/föda|mat/.test(name) && /äter|äta|föda|mat|byte/.test(q)) return true;
   if (/spår/.test(name) && /spår|tass|fot/.test(q)) return true;
   if (/liv|miljö|hem|biotop/.test(name) && /bor|vinter|lever|hem|skog|miljö/.test(q)) return true;
+  if (/säsong/.test(name) && /säsong|när|tiden|leta/.test(q)) return true;
+  if (/ålder/.test(name) && /gammal|gamla|ålder|år/.test(q)) return true;
   return false;
+}
+
+function answerFromNarrative(question: string, speciesName: string, narrative: string) {
+  const q = question.toLocaleLowerCase("sv");
+  const sentences = narrative
+    .split(/\n+/)
+    .flatMap((paragraph) => paragraph.split(/(?<=[.!?])\s+/))
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+  const picked = narrativeSentences(q, speciesName, sentences);
+  if (!picked.length) return UNKNOWN;
+  const named = new RegExp(`\\b${escapeRegExp(speciesName)}`, "i");
+  const text = picked
+    .map((sentence) => (named.test(sentence) ? sentence : sentence.replace(/\bden\b/g, speciesName)))
+    .join(" ");
+  return speakAboutMyself(text, speciesName);
+}
+
+function narrativeSentences(question: string, speciesName: string, sentences: string[]) {
+  if (/berget|klippa|hällmark|nakna/.test(question)) {
+    return sentences.filter((sentence) =>
+      /klippor|hällmark|pålrot|bergsskreva|berget/.test(sentence.toLocaleLowerCase("sv")),
+    );
+  }
+  if (/\bgran/.test(question)) {
+    return sentences.filter((sentence) => /\bgran/.test(sentence.toLocaleLowerCase("sv")));
+  }
+  if (/martall/.test(question)) {
+    return sentences.filter((sentence) => /martall/.test(sentence.toLocaleLowerCase("sv")));
+  }
+  const name = speciesName.toLocaleLowerCase("sv");
+  const words = keywords(question).filter((word) => word !== name);
+  return sentences.filter((sentence) =>
+    words.some((word) => sentence.toLocaleLowerCase("sv").includes(word)),
+  );
 }

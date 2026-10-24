@@ -43,7 +43,7 @@ export function SpeciesArticle({ page }: { page: SpeciesView }) {
   return (
     <article className="bg-paper">
       {page.preview ? <PreviewBanner slug={page.slug} /> : null}
-      {sections.map((section) => (
+      {sections.map((section, index) => (
         <SectionView
           key={section.id}
           section={section}
@@ -52,6 +52,7 @@ export function SpeciesArticle({ page }: { page: SpeciesView }) {
           heroImage={heroImage ?? null}
           facts={facts}
           cards={cards}
+          trailingSpace={needsSpaceAfterFacts(sections, index, page.preview)}
           sound={sound?.audioUrl ? { src: sound.audioUrl, label: sound.label } : null}
         />
       ))}
@@ -80,6 +81,40 @@ function PreviewBanner({ slug }: { slug: string }) {
   )
 }
 
+/** Major sections whose top padding is paper, so they already separate themselves from Snabbfakta. */
+function opensOnPaper(section: SpeciesSection) {
+  if (section.gap) return false
+  switch (section.id) {
+    case "introduction":
+    case "quick_facts":
+    case "documentary":
+    case "deep_dive":
+    case "video":
+    case "species_sound":
+    case "ask_species":
+      return true
+    default:
+      return false
+  }
+}
+
+function nextVisibleSection(sections: SpeciesSection[], index: number, preview: boolean) {
+  for (let cursor = index + 1; cursor < sections.length; cursor++) {
+    const candidate = sections[cursor]
+    if (candidate.gap && !preview) continue
+    if (candidate.id === "hero" && !candidate.gap && !candidate.image) continue
+    return candidate
+  }
+  return null
+}
+
+function needsSpaceAfterFacts(sections: SpeciesSection[], index: number, preview: boolean) {
+  const section = sections[index]
+  if (section.id !== "quick_facts" || section.gap) return false
+  const next = nextVisibleSection(sections, index, preview)
+  return !next || !opensOnPaper(next)
+}
+
 function SectionView({
   section,
   preview,
@@ -87,6 +122,7 @@ function SectionView({
   heroImage,
   facts,
   cards,
+  trailingSpace,
   sound,
 }: {
   section: SpeciesSection
@@ -95,6 +131,7 @@ function SectionView({
   heroImage: PublicImage | null
   facts: { label: string; value: string }[]
   cards: { label: string; value: string }[]
+  trailingSpace: boolean
   sound: { src: string; label: string | null } | null
 }) {
   if (section.gap) {
@@ -135,7 +172,9 @@ function SectionView({
     case "quick_facts":
       return (
         <section className="bg-paper">
-          <div className="mx-auto max-w-6xl px-5 pt-16 sm:px-8 sm:pt-20">
+          <div
+            className={`mx-auto max-w-6xl px-5 pt-16 sm:px-8 sm:pt-20${trailingSpace ? " pb-16 sm:pb-20" : ""}`}
+          >
             <h2 className="mb-6 font-serif text-3xl font-semibold text-forest">{section.heading}</h2>
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               {section.facts.map((fact, index) => {
@@ -261,6 +300,14 @@ function SectionView({
           avatar={heroImage}
           facts={facts}
           cards={cards}
+          narrative={
+            cards.length
+              ? null
+              : (page.sections.find(
+                  (item): item is Extract<SpeciesSection, { id: "introduction" }> =>
+                    item.id === "introduction" && !item.gap,
+                )?.body ?? null)
+          }
           sound={sound}
         />
       )

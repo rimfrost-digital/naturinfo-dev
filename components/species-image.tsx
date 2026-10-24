@@ -12,6 +12,12 @@ function sanityImageLoader({ src, width, quality }: ImageLoaderProps) {
   return url.toString();
 }
 
+function imageLoader(src: string) {
+  // Sanity CDN keeps the approved CDN loader. Local customer-preview files
+  // are optimized by Next with the same width, quality, and format behaviour.
+  return src.startsWith("/") ? undefined : sanityImageLoader;
+}
+
 type SpeciesImageProps = {
   image: PublicImage;
   sizes: string;
@@ -31,13 +37,15 @@ export function SpeciesImage({
   className,
   fill = false,
 }: SpeciesImageProps) {
+  const loader = imageLoader(image.url);
+
   if (fill) {
     return (
       <Image
         src={image.url}
         alt={image.alt}
         fill
-        loader={sanityImageLoader}
+        {...(loader ? { loader } : {})}
         sizes={sizes}
         quality={quality}
         priority={priority}
@@ -53,7 +61,7 @@ export function SpeciesImage({
       alt={image.alt}
       width={image.width}
       height={image.height}
-      loader={sanityImageLoader}
+      {...(loader ? { loader } : {})}
       sizes={sizes}
       quality={quality}
       priority={priority}
