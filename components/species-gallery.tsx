@@ -8,13 +8,36 @@ import type { PublicImage } from "@/sanity/lib/types"
 
 const galleryImageSizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 400px"
 
+export type SpeciesGalleryLabels = {
+  enlarge: string
+  enlarged: string
+  close: string
+  previous: string
+  next: string
+  previousImage: string
+  nextImage: string
+}
+
+const swedishGalleryLabels: SpeciesGalleryLabels = {
+  enlarge: "Förstora",
+  enlarged: "Förstorad bild",
+  close: "Stäng",
+  previous: "Föregående",
+  next: "Nästa",
+  previousImage: "Föregående bild",
+  nextImage: "Nästa bild",
+}
+
 export function SpeciesGallery({
   images,
   enlargeable = false,
+  labels = null,
 }: {
   images: PublicImage[]
   enlargeable?: boolean
+  labels?: SpeciesGalleryLabels | null
 }) {
+  const chrome = labels ?? swedishGalleryLabels
   const [active, setActive] = useState<number | null>(null)
   const returnFocus = useRef<HTMLElement | null>(null)
 
@@ -38,7 +61,13 @@ export function SpeciesGallery({
               <button
                 type="button"
                 className="group block w-full cursor-pointer rounded-2xl text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
-                aria-label={image.alt ? `Förstora: ${image.alt}` : "Förstora bilden"}
+                aria-label={
+                  image.alt
+                    ? `${chrome.enlarge}: ${image.alt}`
+                    : labels
+                      ? chrome.enlarge
+                      : "Förstora bilden"
+                }
                 onClick={(event) => openAt(index, event.currentTarget)}
               >
                 <GalleryFrame image={image} enlargeable />
@@ -58,6 +87,7 @@ export function SpeciesGallery({
         <GalleryLightbox
           images={images}
           index={active}
+          labels={chrome}
           onIndex={setActive}
           onClose={close}
         />
@@ -86,11 +116,13 @@ function GalleryFrame({ image, enlargeable = false }: { image: PublicImage; enla
 function GalleryLightbox({
   images,
   index,
+  labels,
   onIndex,
   onClose,
 }: {
   images: PublicImage[]
   index: number
+  labels: SpeciesGalleryLabels
   onIndex: (index: number) => void
   onClose: () => void
 }) {
@@ -159,7 +191,7 @@ function GalleryLightbox({
       ref={dialogRef}
       role="dialog"
       aria-modal="true"
-      aria-label={image.alt ? `Förstorad bild: ${image.alt}` : "Förstorad bild"}
+      aria-label={image.alt ? `${labels.enlarged}: ${image.alt}` : labels.enlarged}
       className="fixed inset-0 z-[70] flex items-center justify-center overflow-hidden bg-forest-deep/90 p-4 sm:p-8"
       onClick={onClose}
     >
@@ -167,7 +199,7 @@ function GalleryLightbox({
         ref={closeRef}
         type="button"
         className="absolute top-4 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-paper/15 text-paper transition-colors hover:bg-paper/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
-        aria-label="Stäng"
+        aria-label={labels.close}
         onClick={onClose}
       >
         <X className="h-5 w-5" aria-hidden="true" />
@@ -210,19 +242,19 @@ function GalleryLightbox({
             <button
               type="button"
               className="flex h-11 items-center gap-2 rounded-full bg-paper/15 px-4 text-sm font-medium text-paper transition-colors hover:bg-paper/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
-              aria-label="Föregående bild"
+              aria-label={labels.previousImage}
               onClick={() => step(-1)}
             >
               <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-              Föregående
+              {labels.previous}
             </button>
             <button
               type="button"
               className="flex h-11 items-center gap-2 rounded-full bg-paper/15 px-4 text-sm font-medium text-paper transition-colors hover:bg-paper/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
-              aria-label="Nästa bild"
+              aria-label={labels.nextImage}
               onClick={() => step(1)}
             >
-              Nästa
+              {labels.next}
               <ChevronRight className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>

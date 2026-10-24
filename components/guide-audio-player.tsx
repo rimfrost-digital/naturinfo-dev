@@ -10,7 +10,17 @@ function formatTime(seconds: number) {
   return `${minutes}:${rest.toString().padStart(2, "0")}`;
 }
 
-export function GuideAudioPlayer({ src, title }: { src: string; title: string }) {
+export function GuideAudioPlayer({
+  src,
+  title,
+  playLabel = "Spela upp guiden",
+  pauseLabel = "Pausa guiden",
+}: {
+  src: string;
+  title: string;
+  playLabel?: string;
+  pauseLabel?: string;
+}) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -58,7 +68,7 @@ export function GuideAudioPlayer({ src, title }: { src: string; title: string })
       <button
         type="button"
         onClick={toggle}
-        aria-label={playing ? "Pausa guiden" : "Spela upp guiden"}
+        aria-label={playing ? pauseLabel : playLabel}
         className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-forest text-paper transition-transform hover:scale-105"
       >
         {playing ? (

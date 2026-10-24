@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { PawPrint, Send } from "lucide-react";
 import { SpeciesImage } from "@/components/species-image";
 import { SpeciesSoundButton } from "@/components/species-sound-button";
+import type { HavsornAskPreview } from "@/lib/customer-preview/havsorn-language";
 import type { PublicImage } from "@/sanity/lib/types";
 
 type Fact = { label: string; value: string };
@@ -24,6 +25,8 @@ export function AskSpeciesDemo({
   cards,
   narrative = null,
   sound = null,
+  askPreview = null,
+  soundPauseLabel,
 }: {
   title: string;
   intro: string | null;
@@ -35,12 +38,15 @@ export function AskSpeciesDemo({
   /** Page introduction, used only when the page has no deep-dive cards. */
   narrative?: string | null;
   sound?: { src: string; label: string | null } | null;
+  /** Havsörn preview only. Swedish pages leave this unset. */
+  askPreview?: HavsornAskPreview | null;
+  soundPauseLabel?: string;
 }) {
   const [draft, setDraft] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [busy, setBusy] = useState(false);
   const nextId = useRef(0);
-  const welcome = openingGreeting(speciesName);
+  const welcome = askPreview?.greeting ?? openingGreeting(speciesName);
   const soundLabel = listenLabel(speciesName, sound?.label ?? null);
 
   function ask(text: string) {
@@ -55,7 +61,11 @@ export function AskSpeciesDemo({
     window.setTimeout(() => {
       setTurns((current) => [
         ...current,
-        { id: replyId, role: "species", text: answerFromPage(question, speciesName, facts, cards, narrative) },
+        {
+          id: replyId,
+          role: "species",
+          text: answerFromPage(question, speciesName, facts, cards, narrative, askPreview),
+        },
       ]);
       setBusy(false);
     }, 450);
@@ -69,17 +79,18 @@ export function AskSpeciesDemo({
             <div className="min-w-0">
               <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-brass">
                 <PawPrint className="h-4 w-4 text-paper" aria-hidden="true" />
-                Prata med naturen
+                {askPreview?.kicker ?? "Prata med naturen"}
               </p>
               <h2 className="mt-3 font-serif text-4xl font-semibold text-paper sm:text-5xl">{title}</h2>
               {intro ? <p className="mt-3 max-w-2xl leading-relaxed text-paper/80">{intro}</p> : null}
               <p className="mt-2 text-sm italic text-brass">
-                En lekfull guide för barn – svaren skapas av en digital {speciesName.toLowerCase()}skompis.
+                {askPreview?.companionNote ??
+                  `En lekfull guide för barn – svaren skapas av en digital ${speciesName.toLowerCase()}skompis.`}
               </p>
             </div>
             {sound ? (
               <div className="shrink-0 sm:pt-10">
-                <SpeciesSoundButton src={sound.src} label={soundLabel} />
+                <SpeciesSoundButton src={sound.src} label={soundLabel} pauseLabel={soundPauseLabel} />
               </div>
             ) : null}
           </div>
@@ -135,8 +146,8 @@ export function AskSpeciesDemo({
               <input
                 value={draft}
                 onChange={(event) => setDraft(event.target.value)}
-                placeholder="Skriv din fråga här..."
-                aria-label={`Skriv din fråga till ${speciesName}`}
+                placeholder={askPreview?.placeholder ?? "Skriv din fråga här..."}
+                aria-label={askPreview?.questionLabel ?? `Skriv din fråga till ${speciesName}`}
                 className="flex-1 rounded-full border border-moss bg-paper px-4 py-2.5 text-ink outline-none placeholder:text-moss/70 focus:border-brass"
               />
               <button
@@ -211,17 +222,43 @@ function answerFromPage(
   facts: Fact[],
   cards: Fact[],
   narrative: string | null,
+  askPreview: HavsornAskPreview | null,
 ) {
-  if (asksForSpeed(question) && !mentionsSpeed(facts, cards)) return UNKNOWN;
-  if (asksForLookalike(question) && !mentionsLookalike(facts, cards)) return UNKNOWN;
+  const unknown = askPreview?.unknownReply ?? UNKNOWN;
+  const translatedSpeed = Boolean(askPreview) && /\bfast\b|\bspeed\b|schnell/i.test(question);
+  if ((asksForSpeed(question) || translatedSpeed) && !mentionsSpeed(facts, cards)) return unknown;
+  if (asksForLookalike(question) && !mentionsLookalike(facts, cards)) return unknown;
+
+  if (askPreview) {
+    const sourced = sourcePassage(question, cards);
+    if (sourced) return tidy(sourced);
+  }
 
   const fact = facts.find((item) => matchesFact(question, item.label));
-  if (fact) return speakFact(fact, speciesName);
+  if (fact) return askPreview ? tidy(fact.value) : speakFact(fact, speciesName);
 
   const card = bestCard(question, cards);
-  if (card) return speakAboutMyself(relevantPassage(question, card), speciesName);
-  if (narrative && cards.length === 0) return answerFromNarrative(question, speciesName, narrative);
-  return UNKNOWN;
+  if (card) {
+    const passage = relevantPassage(question, card);
+    return askPreview ? tidy(passage) : speakAboutMyself(passage, speciesName);
+  }
+  if (narrative && cards.length === 0) {
+    return askPreview ? unknown : answerFromNarrative(question, speciesName, narrative);
+  }
+  return unknown;
+}
+
+/** Preset Havsörn questions whose translated wording does not overlap the Swedish matchers. */
+function sourcePassage(question: string, cards: Fact[]) {
+  const q = question.toLocaleLowerCase("sv");
+  const haystack = (card: Fact) => `${card.label} ${card.value}`.toLocaleLowerCase("sv");
+  if (/nest|horst|\bbo\b|boet|häck/.test(q)) {
+    return cards.find((card) => /nest|horst|häck|risbo|brut/.test(haystack(card)))?.value ?? null;
+  }
+  if (/\bfood\b|\bdiet\b|\beat\b|frisst|fressen|nahrung|äter|föda/.test(q)) {
+    return cards.find((card) => /diet|nahrung|hunting|jakt|föda|fish|fisch/.test(haystack(card)))?.value ?? null;
+  }
+  return null;
 }
 
 function asksForSpeed(question: string) {

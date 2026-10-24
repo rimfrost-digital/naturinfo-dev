@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import Link from "next/link"
 import { ArrowLeft, Beef, Leaf, MapPin, Moon, PawPrint, Ruler, Scale } from "lucide-react"
 import { AskSpeciesDemo } from "@/components/ask-species-demo"
@@ -7,13 +8,26 @@ import { SpeciesGallery } from "@/components/species-gallery"
 import { SpeciesImage } from "@/components/species-image"
 import { SpeciesSoundButton } from "@/components/species-sound-button"
 import { contentLevelLabel } from "@/lib/content-level-label"
+import type { HavsornAskPreview, HavsornUiLabels } from "@/lib/customer-preview/havsorn-language"
 import { paragraphs } from "@/sanity/lib/species-page"
 import type { PublicImage, SpeciesSection, SpeciesView } from "@/sanity/lib/types"
 
 const contentImageSizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
 const factIcons = [Scale, Beef, PawPrint, MapPin, Ruler, Leaf, Moon]
 
-export function SpeciesArticle({ page }: { page: SpeciesView }) {
+export function SpeciesArticle({
+  page,
+  languageControl = null,
+  documentaryNote = null,
+  askPreview = null,
+  uiLabels = null,
+}: {
+  page: SpeciesView
+  languageControl?: ReactNode
+  documentaryNote?: string | null
+  askPreview?: HavsornAskPreview | null
+  uiLabels?: HavsornUiLabels | null
+}) {
   const heroImage = page.sections.find(
     (section): section is Extract<SpeciesSection, { id: "hero" }> =>
       section.id === "hero" && !section.gap && Boolean(section.image),
@@ -54,6 +68,10 @@ export function SpeciesArticle({ page }: { page: SpeciesView }) {
           cards={cards}
           trailingSpace={needsSpaceAfterFacts(sections, index, page.preview)}
           sound={sound?.audioUrl ? { src: sound.audioUrl, label: sound.label } : null}
+          languageControl={languageControl}
+          documentaryNote={documentaryNote}
+          askPreview={askPreview}
+          uiLabels={uiLabels}
         />
       ))}
       <section className="bg-forest">
@@ -62,7 +80,7 @@ export function SpeciesArticle({ page }: { page: SpeciesView }) {
             href="/artsida"
             className="rounded-full border border-paper px-8 py-3 text-sm font-medium tracking-wide text-paper transition-colors hover:bg-paper hover:text-forest"
           >
-            Alla arter
+            {uiLabels?.allSpecies ?? "Alla arter"}
           </Link>
         </div>
       </section>
@@ -124,6 +142,10 @@ function SectionView({
   cards,
   trailingSpace,
   sound,
+  languageControl,
+  documentaryNote,
+  askPreview,
+  uiLabels,
 }: {
   section: SpeciesSection
   preview: boolean
@@ -133,6 +155,10 @@ function SectionView({
   cards: { label: string; value: string }[]
   trailingSpace: boolean
   sound: { src: string; label: string | null } | null
+  languageControl: ReactNode
+  documentaryNote: string | null
+  askPreview: HavsornAskPreview | null
+  uiLabels: HavsornUiLabels | null
 }) {
   if (section.gap) {
     if (!preview) return null
@@ -146,7 +172,15 @@ function SectionView({
 
   switch (section.id) {
     case "hero":
-      return section.image ? <Hero page={page} image={section.image} label={section.heading} /> : null
+      return section.image ? (
+        <Hero
+          page={page}
+          image={section.image}
+          label={section.heading}
+          languageControl={languageControl}
+          allSpecies={uiLabels?.allSpecies ?? "Alla arter"}
+        />
+      ) : null
     case "introduction":
       return (
         <section className="bg-paper">
@@ -238,7 +272,23 @@ function SectionView({
         <section className="bg-forest-deep">
           <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
             <h2 className="mb-8 font-serif text-4xl font-semibold text-paper">{section.heading}</h2>
-            <SpeciesGallery images={section.images} enlargeable={section.id === "gallery"} />
+            <SpeciesGallery
+              images={section.images}
+              enlargeable={section.id === "gallery"}
+              labels={
+                uiLabels
+                  ? {
+                      enlarge: uiLabels.enlarge,
+                      enlarged: uiLabels.enlarged,
+                      close: uiLabels.close,
+                      previous: uiLabels.previous,
+                      next: uiLabels.next,
+                      previousImage: uiLabels.previousImage,
+                      nextImage: uiLabels.nextImage,
+                    }
+                  : null
+              }
+            />
           </div>
         </section>
       )
@@ -250,7 +300,12 @@ function SectionView({
             <div className="grid gap-8">
               {section.videos.map((video) => (
                 <figure key={video.url}>
-                  <DeferredVideo src={video.url} title={video.title} poster={video.poster} />
+                  <DeferredVideo
+                    src={video.url}
+                    title={video.title}
+                    poster={video.poster}
+                    playLabel={uiLabels?.playVideo}
+                  />
                   {video.title ? (
                     <figcaption className="mt-3 text-sm text-moss">{video.title}</figcaption>
                   ) : null}
@@ -264,8 +319,18 @@ function SectionView({
       return (
         <section className="bg-paper">
           <div className="mx-auto max-w-6xl px-5 pt-16 sm:px-8 sm:pt-20">
-            <h2 className="mb-6 font-serif text-3xl font-semibold text-forest">{section.heading}</h2>
-            {section.audioUrl ? <GuideAudioPlayer src={section.audioUrl} title={section.heading} /> : null}
+            <h2 className={documentaryNote ? "font-serif text-3xl font-semibold text-forest" : "mb-6 font-serif text-3xl font-semibold text-forest"}>
+              {section.heading}
+            </h2>
+            {documentaryNote ? <p className="mt-2 mb-6 text-sm text-moss">{documentaryNote}</p> : null}
+            {section.audioUrl ? (
+              <GuideAudioPlayer
+                src={section.audioUrl}
+                title={section.heading}
+                playLabel={uiLabels?.playGuide}
+                pauseLabel={uiLabels?.pauseGuide}
+              />
+            ) : null}
             {section.script
               ? paragraphs(section.script).map((paragraph) => (
                   <p key={paragraph} className="mt-6 max-w-3xl leading-relaxed text-ink">
@@ -285,7 +350,11 @@ function SectionView({
           <div className="mx-auto max-w-6xl px-5 pt-16 sm:px-8 sm:pt-20">
             <h2 className="mb-6 font-serif text-3xl font-semibold text-forest">{section.heading}</h2>
             {section.audioUrl ? (
-              <SpeciesSoundButton src={section.audioUrl} label={section.label ?? section.heading} />
+              <SpeciesSoundButton
+                src={section.audioUrl}
+                label={section.label ?? section.heading}
+                pauseLabel={uiLabels?.pause}
+              />
             ) : null}
           </div>
         </section>
@@ -309,24 +378,41 @@ function SectionView({
                 )?.body ?? null)
           }
           sound={sound}
+          askPreview={askPreview}
+          soundPauseLabel={uiLabels?.pause}
         />
       )
   }
 }
 
-function Hero({ page, image, label }: { page: SpeciesView; image: PublicImage; label: string }) {
+function Hero({
+  page,
+  image,
+  label,
+  languageControl,
+  allSpecies,
+}: {
+  page: SpeciesView
+  image: PublicImage
+  label: string
+  languageControl: ReactNode
+  allSpecies: string
+}) {
   return (
     <section aria-label={label}>
       <div className="relative h-[80vh] w-full overflow-hidden">
       <div className="absolute inset-x-0 top-0 z-20">
-        <div className="mx-auto flex max-w-6xl px-5 py-5 sm:px-8">
+        <div
+          className={`mx-auto flex max-w-6xl px-5 py-5 sm:px-8${languageControl ? " items-center justify-between gap-3" : ""}`}
+        >
           <Link
             href="/artsida"
             className="flex items-center gap-2 rounded-full bg-forest-deep/30 px-4 py-2 text-sm font-medium text-paper backdrop-blur-md transition-colors hover:bg-forest-deep/50"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            Alla arter
+            {allSpecies}
           </Link>
+          {languageControl}
         </div>
       </div>
       <SpeciesImage

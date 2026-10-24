@@ -9,13 +9,15 @@ export function DeferredVideo({
   src,
   title,
   poster,
+  playLabel = "Spela upp video",
 }: {
   src: string;
   title: string | null;
   poster: PublicImage | null;
+  playLabel?: string;
 }) {
   const [active, setActive] = useState(false);
-  const label = title ? `Spela upp video: ${title}` : "Spela upp video";
+  const label = title ? `${playLabel}: ${title}` : playLabel;
 
   if (!active) {
     return (

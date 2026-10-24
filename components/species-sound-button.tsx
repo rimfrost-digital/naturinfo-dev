@@ -3,7 +3,15 @@
 import { useRef, useState } from "react";
 import { Play } from "lucide-react";
 
-export function SpeciesSoundButton({ src, label }: { src: string; label: string }) {
+export function SpeciesSoundButton({
+  src,
+  label,
+  pauseLabel = "Pausa",
+}: {
+  src: string;
+  label: string;
+  pauseLabel?: string;
+}) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
 
@@ -27,7 +35,7 @@ export function SpeciesSoundButton({ src, label }: { src: string; label: string 
       type="button"
       onClick={toggle}
       aria-pressed={playing}
-      aria-label={playing ? `Pausa: ${label}` : label}
+      aria-label={playing ? `${pauseLabel}: ${label}` : label}
       className="inline-flex items-center gap-2.5 rounded-full bg-brass py-2 pr-4 pl-2 text-sm font-medium text-forest-deep shadow-sm transition-all hover:bg-[#c9a666] hover:shadow-md"
     >
       <span className="flex h-6 w-6 items-center justify-center rounded-full bg-paper">
@@ -41,7 +49,7 @@ export function SpeciesSoundButton({ src, label }: { src: string; label: string 
           <Play className="h-3 w-3 translate-x-px" fill="currentColor" aria-hidden="true" />
         )}
       </span>
-      {playing ? "Pausa" : label}
+      {playing ? pauseLabel : label}
     </button>
   );
 }
